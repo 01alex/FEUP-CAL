@@ -16,4 +16,8 @@ Considere a possibilidade de utilizar mapas reais, extraídos do OpenStreetMaps 
 <a name="ref1" href="http://stackoverflow.com/questions/16704664/how-to-find-the-shortest-path-between-two-vertives-in-a-graph">2) How to find the shortest path between two vertives in a graph?</a><br>
 <a name="ref1" href="https://www.youtube.com/watch?v=8Ls1RqHCOPw">3) dijkstra's algorithm c++ - Video 1</a><br>
 <a name="ref1" href="https://www.youtube.com/watch?v=WN3Rb9wVYDY">4) dijkstra's algorithm c++ - Video 2</a><br>
+<a name="ref1" href="https://www.researchgate.net/post/How_to_get_a_city_map_into_a_graph_format_of_nodes_and_edges">5) How to get a city map into a graph?</a><br>
+<a name="ref1" href="http://gis.stackexchange.com/questions/104452/how-to-build-a-graph-from-a-map">6) How to Build a graph from a map</a><br>
+
+
 
