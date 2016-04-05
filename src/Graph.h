@@ -5,6 +5,7 @@
 #define GRAPH_H_
 
 #include <vector>
+#include <string>
 using namespace std;
 
 template <class T> class Edge;
@@ -30,15 +31,15 @@ Vertex<T>::Vertex(T in): info(in), visited(false){}
 template <class T>
 class Edge { // ruas
 	Vertex<T> * dest;
-	double weight;
+	string streetName;
 public:
-	Edge(Vertex<T> *d, double w);
+	Edge(Vertex<T> *d, string sName);
 	friend class Graph<T>;
 	friend class Vertex<T>;
 };
 
 template <class T>
-Edge<T>::Edge(Vertex<T> *d, double w): dest(d), weight(w){}
+Edge<T>::Edge(Vertex<T> *d, string sName): dest(d), streetName(sName){}
 
 template <class T>
 class Graph {
@@ -47,7 +48,7 @@ public:
 	vector<Vertex<T> * > getVertexSet() const;
 	int getNumVertex() const;
 	bool addVertex(const T &in);
-	bool addEdge(const T &sourc, const T &dest,double w);
+	bool addEdge(const T &sourc, const T &dest,string streetName);
 	bool removeVertex(const T &in);
 };
 
@@ -82,7 +83,7 @@ inline bool Graph<T>::addVertex(const T& in) {
 }
 
 template<class T>
-inline bool Graph<T>::addEdge(const T& sourc, const T& dest, double w) {
+inline bool Graph<T>::addEdge(const T& sourc, const T& dest, string streetName) {
 
 	bool foundS = false;
 	bool foundD = false;
@@ -110,8 +111,8 @@ inline bool Graph<T>::addEdge(const T& sourc, const T& dest, double w) {
 	}
 	if(foundS && foundD){
 		//Vertex<T> *v = new Vertex<T>(dest);
-		Edge<T> *eDest = new Edge<T>(vertexSet[posDest],w);
-		Edge<T> *eSource = new Edge<T>(vertexSet[posSource],w);
+		Edge<T> *eDest = new Edge<T>(vertexSet[posDest],streetName);
+		Edge<T> *eSource = new Edge<T>(vertexSet[posSource],streetName);
 
 		vertexSet[posSource]->addEdge(*eDest);
 		vertexSet[posDest]->addEdge(*eSource);
@@ -146,8 +147,10 @@ inline int Vertex<T>::findEdge(Vertex<T> v) {
 
 	for(unsigned int i = 0; i < adj.size(); i++){
 
-		if(adj[i]->dest->info == v.info){
+		if(adj[i].dest->info ==
+				v.info){
 			result = i;
+			found = true;
 			break;
 		}
 
