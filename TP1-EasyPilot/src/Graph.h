@@ -59,8 +59,8 @@ class Graph {
 public:
 	vector<Vertex<T> * > getVertexSet() const;
 	int getNumVertex() const;
-	bool addVertex(const T &in);
-	bool addEdge(const T &sourc, const T &dest,string streetName,float distance);
+	int addVertex(const T &in);
+	bool addEdge(const T &sourc, const T &dest, string streetName, float distance);
 	bool removeVertex(const T &in);
 };
 
@@ -74,23 +74,19 @@ vector<Vertex<T> * > Graph<T>::getVertexSet() const {
 }
 
 template<class T>
-inline bool Graph<T>::addVertex(const T& in) {
-	Vertex<T> *v = new Vertex<T>(in);
+inline int Graph<T>::addVertex(const T& in) {
 
-	bool accept = true;
 	for(unsigned int i = 0; i < vertexSet.size(); i++){
 
-		if (vertexSet[i]->info == in){
-			accept = false;
-			break;
-		}
+		if (vertexSet[i]->info == in)
+			return i;
 
 	}
 
-	if (accept){
-		vertexSet.push_back(v);
-	}
-	return accept;
+	Vertex<T> *v = new Vertex<T>(in);
+	vertexSet.push_back(v);
+
+	return vertexSet.size();
 
 }
 
