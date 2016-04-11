@@ -16,8 +16,15 @@ class Vertex { //cruzamentos
 	T info;
 	vector<Edge<T>  > adj;
 	bool visited;
+	float weight; //para o algoritmo dijkstra
 public:
 	Vertex(T in);
+	vector<Edge<T>  > getAdj();
+	int findSmallestAdj(); //retorna posicao no vetor adj da aresta mais pequena ligada a este nó
+	float getWeight();
+	bool getVisited();
+	void setVisited(bool visited);
+	void setNewWeight(float nWeight);
 	bool addEdge(Edge<T> &edge);
 	int findEdge(Vertex<T> v);
 	friend class Graph<T>;
@@ -25,21 +32,26 @@ public:
 
 
 template <class T>
-Vertex<T>::Vertex(T in): info(in), visited(false){}
+Vertex<T>::Vertex(T in): info(in), visited(false), weight(9999999.0){}
 
 
 template <class T>
 class Edge { // ruas
 	Vertex<T> * dest;
 	string streetName;
+	float distance;
+
 public:
-	Edge(Vertex<T> *d, string sName);
+	Edge(Vertex<T> *d, string sName,float dis);
+
+	Vertex<T> getDest();
+	float getDistance();
 	friend class Graph<T>;
 	friend class Vertex<T>;
 };
 
 template <class T>
-Edge<T>::Edge(Vertex<T> *d, string sName): dest(d), streetName(sName){}
+Edge<T>::Edge(Vertex<T> *d, string sName, float dis): dest(d), streetName(sName),distance(dis){}
 
 template <class T>
 class Graph {
@@ -48,7 +60,7 @@ public:
 	vector<Vertex<T> * > getVertexSet() const;
 	int getNumVertex() const;
 	bool addVertex(const T &in);
-	bool addEdge(const T &sourc, const T &dest,string streetName);
+	bool addEdge(const T &sourc, const T &dest,string streetName,float distance);
 	bool removeVertex(const T &in);
 };
 
@@ -83,7 +95,7 @@ inline bool Graph<T>::addVertex(const T& in) {
 }
 
 template<class T>
-inline bool Graph<T>::addEdge(const T& sourc, const T& dest, string streetName) {
+inline bool Graph<T>::addEdge(const T& sourc, const T& dest, string streetName, float distance) {
 
 	bool foundS = false;
 	bool foundD = false;
@@ -111,8 +123,8 @@ inline bool Graph<T>::addEdge(const T& sourc, const T& dest, string streetName) 
 	}
 	if(foundS && foundD){
 		//Vertex<T> *v = new Vertex<T>(dest);
-		Edge<T> *eDest = new Edge<T>(vertexSet[posDest],streetName);
-		Edge<T> *eSource = new Edge<T>(vertexSet[posSource],streetName);
+		Edge<T> *eDest = new Edge<T>(vertexSet[posDest],streetName, distance);
+		Edge<T> *eSource = new Edge<T>(vertexSet[posSource],streetName,distance);
 
 		vertexSet[posSource]->addEdge(*eDest);
 		vertexSet[posDest]->addEdge(*eSource);
@@ -140,6 +152,59 @@ bool Graph<T>::removeVertex(const T& in) {
 }
 
 template<class T>
+inline void Vertex<T>::setVisited(bool visited) {
+
+	this->visited = visited;
+}
+
+template<class T>
+inline void Vertex<T>::setNewWeight(float nWeight) {
+
+	this->weight = nWeight;
+
+}
+
+template<class T>
+inline vector<Edge<T> > Vertex<T>::getAdj() {
+
+	return adj;
+
+}
+
+template<class T>
+inline float Vertex<T>::getWeight() {
+
+	return weight;
+
+}
+
+template<class T>
+inline int Vertex<T>::findSmallestAdj() {
+
+	int result = 999999;
+
+	if (adj.size() == 0)
+		result = -1;
+
+	for (unsigned int i = 0; i < adj.size(); i++){
+
+		if (adj[i]->getDistance < result)
+			result = i;
+
+	}
+
+	return result;
+
+}
+
+template<class T>
+inline bool Vertex<T>::getVisited() {
+
+	return this->visited;
+
+}
+
+template<class T>
 inline int Vertex<T>::findEdge(Vertex<T> v) {
 
 	bool found = false;
@@ -160,6 +225,19 @@ inline int Vertex<T>::findEdge(Vertex<T> v) {
 
 
 	return result;
+
+}
+
+template<class T>
+inline Vertex<T> Edge<T>::getDest() {
+
+	return dest;
+}
+
+template<class T>
+inline float Edge<T>::getDistance() {
+
+	return distance;
 
 }
 
