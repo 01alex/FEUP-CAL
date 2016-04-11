@@ -207,25 +207,13 @@ inline bool Vertex<T>::getVisited() {
 template<class T>
 inline int Vertex<T>::findEdge(Vertex<T> v) {
 
-	bool found = false;
-	int result;
-
 	for(unsigned int i = 0; i < adj.size(); i++){
 
-		if(adj[i].dest->info ==
-				v.info){
-			result = i;
-			found = true;
-			break;
-		}
-
+		if(adj[i].dest->info == v.info)
+			return i;
 	}
-	if(!found)
-		result = -1;
 
-
-	return result;
-
+	return -1;
 }
 
 template<class T>
