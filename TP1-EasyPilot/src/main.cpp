@@ -23,8 +23,8 @@ void readDataBase(){
 		stringstream linestream(line);
 		string value;
 		args->clear();
-		int i=0;
 
+		int i=0;
 		while(getline(linestream, value, ';')){
 			args[i]=value;
 			i++;
@@ -41,13 +41,15 @@ void readDataBase(){
 	}
 
 	// tests
-	int counter=0;
+	int counteradj=0, counterindeg=0;
 	for(unsigned i=0; i<map.getNumVertex(); i++){
-		counter += map.getVertexSet()[i]->getAdj().size();
+		counteradj += map.getVertexSet()[i]->getAdj().size();
+		counterindeg += map.getVertexSet()[i]->getIndegree();
 	}
 
 	cout << "Nodes: " << map.getNumVertex() << endl;
-	cout << "Edges: " << counter/2 << endl;
+	cout << "Edges: " << counteradj << endl;
+	cout << "Indegrees: " << counterindeg << endl;
 	//
 
 }
