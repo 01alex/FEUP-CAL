@@ -13,25 +13,27 @@ void readDataBase(){
 
 	Graph<Intersection> porto;
 
-	ifstream dataBase("res/Data.txt");
+	ifstream dataBase("TP1-EasyPilot/res/Data.txt"); //ou "/res/Data.txt"
 	string line;
 	string args[10];		//0-id	1-nome	2-source	3-target	4-km	5-kmh	6-x1	7-y1	8-x2	9-y2
-	int i;
 
 
-	//cout << "Ahah" << endl;
 
-	while(getline(dataBase,line))
-	{
-	    stringstream linestream(line);
+
+	while(getline(dataBase,line)){
+
+		stringstream linestream(line);
 	    string value;
 	    args->clear();
-	    i=0;
-	    while(getline(linestream,value,';')){
+	    int i=0;
+
+	    while(getline(linestream, value, ';')){
 	    	args[i]=value;
-	    	//cout << args[i] << endl;
+	    	cout << args[i] << endl;
+
 	    	i++;
 	    }
+
 
 	    cout << args[0] << endl;
 
