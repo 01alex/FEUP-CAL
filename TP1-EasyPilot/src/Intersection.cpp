@@ -1,27 +1,26 @@
 #include "Intersection.h"
 
-int Intersection::ID = 0;
-
-Intersection::Intersection(): thisID(ID++) {
+Intersection::Intersection() {
 
 }
 
-Intersection::Intersection(string n, int w): thisID(ID++) {
-	this->name = n;
-	this->pesoOuOCrl = w;
+Intersection::Intersection(int ident, float x, float y){
+	this->id=ident;
+	this->coord.x=x;
+	this->coord.y=y;
 }
 
 int Intersection::getID() const{
-	return this->thisID;
+	return this->id;
 }
 
-string Intersection::getName() const {
-	return this->name;
+Coordenadas Intersection::getCoord() const{
+	return this->coord;
 }
 
 bool Intersection::operator ==(const Intersection& p2) const {
 
-	if(this->thisID == p2.getID())
+	if(this->id == p2.getID())
 		return true;
 	return false;
 

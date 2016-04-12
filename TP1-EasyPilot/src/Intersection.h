@@ -4,16 +4,18 @@
 #include <string>
 using namespace std;
 
+struct Coordenadas{
+	float x, y;
+};
+
 class Intersection {
-	static int ID;
-	const int thisID;
-	string name;
-	int pesoOuOCrl;
+	int id;
+	Coordenadas coord;
 public:
 	Intersection();
-	Intersection (string n, int w);
+	Intersection (int ident, float x, float y);
 	int getID() const;
-	string getName() const;
+	Coordenadas getCoord() const;
 	bool operator == (const Intersection &p2) const;
 	friend ostream & operator << (ostream &os, Intersection &p);
 };

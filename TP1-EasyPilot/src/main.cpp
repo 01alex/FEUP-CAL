@@ -6,18 +6,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 
 using namespace std;
 
-void readDataBase(){
+Graph<Intersection> porto;
 
-	Graph<Intersection> porto;
 
-	ifstream dataBase("TP1-EasyPilot/res/Data.txt"); //ou "/res/Data.txt"
+template <class T>
+void readDataBase(Graph<T> &map){
+
+	//Graph<Intersection> porto;
+
+	ifstream dataBase("res/Data.txt"); //ou "/res/Data.txt"
 	string line;
 	string args[10];		//0-id	1-nome	2-source	3-target	4-km	5-kmh	6-x1	7-y1	8-x2	9-y2
-
-
+	std::string::size_type sz;
 
 
 	while(getline(dataBase,line)){
@@ -29,33 +33,39 @@ void readDataBase(){
 
 	    while(getline(linestream, value, ';')){
 	    	args[i]=value;
-	    	cout << args[i] << endl;
-
+	    	//cout << args[i] << endl;
 	    	i++;
 	    }
 
 
-	    cout << args[0] << endl;
+	    //cout << args[0] << endl;
 
-	    /*Intersection i1("qq", 99999);
-	    Intersection i2("qqlink", 99999);
+	    Intersection i1(atoi(args[2].c_str()), atof(args[6].c_str()), atof(args[7].c_str()));
+	    Intersection i2(atoi(args[3].c_str()), atof(args[8].c_str()), atof(args[9].c_str()));
 
-	    porto.addVertex(i1);
-	    porto.addVertex(i2);
+	    map.addVertex(i1);
+	    map.addVertex(i2);
 
-	    porto.addEdge(i1, i2, args[1], atoi(args[4].c_str()));*/
+	    map.addEdge(i1, i2, args[1], atof(args[4].c_str()));
+
+
+	    //cout << map.getVertexSet()[i]->getIntersection().getID() << endl;
+
 
 	    //std::cout << "Line Finished" << std::endl;
 
 	}
 
-	cout << porto.getVertexSet().size() << endl;
+	cout << map.getNumVertex() << endl;
+
+	//cout << porto.getVertexSet().size() << endl;
 
 }
 
+
 int main(){
 
-	readDataBase();
+	readDataBase(porto);
 
 	/*
 

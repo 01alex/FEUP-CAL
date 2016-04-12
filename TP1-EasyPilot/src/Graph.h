@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 using namespace std;
 
 template <class T> class Edge;
@@ -20,6 +21,7 @@ class Vertex { //cruzamentos
 public:
 	Vertex(T in);
 	vector<Edge<T>  > getAdj();
+	T getIntersection() const;
 	int findSmallestAdj(); //retorna posicao no vetor adj da aresta mais pequena ligada a este nó
 	float getWeight();
 	bool getVisited();
@@ -198,6 +200,11 @@ inline bool Vertex<T>::getVisited() {
 
 	return this->visited;
 
+}
+
+template<class T>
+inline T Vertex<T>::getIntersection() const {
+	return info;
 }
 
 template<class T>
