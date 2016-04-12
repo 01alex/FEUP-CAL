@@ -10,62 +10,51 @@
 
 using namespace std;
 
-Graph<Intersection> porto;
+Graph<Intersection> map;
 
-
-template <class T>
-void readDataBase(Graph<T> &map){
-
-	//Graph<Intersection> porto;
+void readDataBase(){
 
 	ifstream dataBase("res/Data.txt"); //ou "/res/Data.txt"
 	string line;
 	string args[10];		//0-id	1-nome	2-source	3-target	4-km	5-kmh	6-x1	7-y1	8-x2	9-y2
-	std::string::size_type sz;
-
 
 	while(getline(dataBase,line)){
 
 		stringstream linestream(line);
-	    string value;
-	    args->clear();
-	    int i=0;
+		string value;
+		args->clear();
+		int i=0;
 
-	    while(getline(linestream, value, ';')){
-	    	args[i]=value;
-	    	//cout << args[i] << endl;
-	    	i++;
-	    }
+		while(getline(linestream, value, ';')){
+			args[i]=value;
+			i++;
+		}
 
+		Intersection i1(atoi(args[2].c_str()), atof(args[6].c_str()), atof(args[7].c_str()));
+		Intersection i2(atoi(args[3].c_str()), atof(args[8].c_str()), atof(args[9].c_str()));
 
-	    //cout << args[0] << endl;
+		map.addVertex(i1);
+		map.addVertex(i2);
 
-	    Intersection i1(atoi(args[2].c_str()), atof(args[6].c_str()), atof(args[7].c_str()));
-	    Intersection i2(atoi(args[3].c_str()), atof(args[8].c_str()), atof(args[9].c_str()));
+		map.addEdge(i1, i2, args[1], atof(args[4].c_str()));
 
-	    map.addVertex(i1);
-	    map.addVertex(i2);
-
-	    map.addEdge(i1, i2, args[1], atof(args[4].c_str()));
-
-
-	    //cout << map.getVertexSet()[i]->getIntersection().getID() << endl;
-
-
-	    //std::cout << "Line Finished" << std::endl;
-
+		//line end
 	}
 
+	/*int counter=0;
+	for(unsigned i=0; i<map.getNumVertex(); i++){
+		counter += map.getVertexSet()[i]->getAdj().size();
+	}
+
+	cout << counter << endl;
 	cout << map.getNumVertex() << endl;
-
-	//cout << porto.getVertexSet().size() << endl;
-
+	 */
 }
 
 
 int main(){
 
-	readDataBase(porto);
+	readDataBase();
 
 	/*
 
