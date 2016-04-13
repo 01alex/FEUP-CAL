@@ -26,6 +26,7 @@ class Vertex { //cruzamentos
 	bool visited;
 	float distance;
 	int indegree;		//numero arestas que apontam para este no
+	bool processing;
 
 public:
 	Vertex *path;
@@ -52,7 +53,14 @@ public:
 };
 
 template <class T>
-Vertex<T>::Vertex(T in): intersect(in), visited(false), indegree(0){}
+struct vertex_greater_than {
+	bool operator()(Vertex<T> * a, Vertex<T> * b) const {
+		return a->getDistance() > b->getDistance();
+	}
+};
+
+template <class T>
+Vertex<T>::Vertex(T in): intersect(in), visited(false), indegree(0), processing(false){}
 
 
 template<class T>
@@ -281,8 +289,9 @@ template<class T>
 void Graph<T>::Dijkstra(const T &start){		//baseado teorica 06.grafos2_a
 
 	for(unsigned i=0; i<getNumVertex(); i++){
-		vertexSet[i].path = NULL;
-		vertexSet[i].setDistance(INFINITY);
+		vertexSet[i]->path = NULL;
+		vertexSet[i]->setDistance(INFINITY);
+		vertexSet[i]->processing = false;
 	}
 
 	Vertex<T> *s = vertexSet[addVertex(start)];
@@ -304,15 +313,22 @@ void Graph<T>::Dijkstra(const T &start){		//baseado teorica 06.grafos2_a
 
 			Vertex<T> *w = v->adj[i].dest;
 
-			if((v->distance + v->adj[i].distance) < w->distance){
-				w->setDistance(v->distance + v->adj[i].distance);
-				w->path = v;
-				/*if()
+			if( (v->distance + v->adj[i].length) < w->distance){
 
-				else*/
+				w->setDistance(v->distance + v->adj[i].length);
+				w->path = v;
+
+				if(!w->processing){
+					w->processing = true;
+					pq.push_back(w);
+				}
+
+				make_heap(pq.begin(), pq.end(), vertex_greater_than<T>());
 			}
 		}
 	}
+
+	cout << pq[0]->getDistance() << endl;
 
 }
 

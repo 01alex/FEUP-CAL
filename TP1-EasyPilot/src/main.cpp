@@ -30,13 +30,13 @@ void readDataBase(){
 			i++;
 		}
 
-		Intersection i1(atoi(args[2].c_str()), atof(args[6].c_str()), atof(args[7].c_str()));
-		Intersection i2(atoi(args[3].c_str()), atof(args[8].c_str()), atof(args[9].c_str()));
+		Intersection source(atoi(args[2].c_str()), atof(args[6].c_str()), atof(args[7].c_str()));
+		Intersection target(atoi(args[3].c_str()), atof(args[8].c_str()), atof(args[9].c_str()));
 
-		map.addVertex(i1);
-		map.addVertex(i2);
+		map.addVertex(source);
+		map.addVertex(target);
 
-		map.addEdge(i1, i2, args[1], atof(args[4].c_str()));
+		map.addEdge(source, target, args[1], atof(args[4].c_str()));
 
 	}
 
@@ -45,6 +45,8 @@ void readDataBase(){
 	for(unsigned i=0; i<map.getNumVertex(); i++){
 		counteradj += map.getVertexSet()[i]->getAdj().size();
 		counterindeg += map.getVertexSet()[i]->getIndegree();
+		//cout << "Adj: " << map.getVertexSet()[i]->getAdj().size() << endl;			//com origem no no
+		//cout << "Indegree: " << map.getVertexSet()[i]->getIndegree() << endl;		//apontam para o no
 	}
 
 	cout << "Nodes: " << map.getNumVertex() << endl;
@@ -57,7 +59,20 @@ void readDataBase(){
 
 int main(){
 
-	readDataBase();
+	//readDataBase();
+
+	Intersection source(0, -2, 2);
+	Intersection target(1, 3, 5);
+	Intersection target2(2, 6, 8);
+
+	map.addVertex(source);
+	map.addVertex(target);
+	map.addVertex(target2);
+
+	map.addEdge(source, target, "belga", 35);
+	map.addEdge(target, target2, "polsky", 15);
+
+	map.Dijkstra(source);
 
 	return 0;
 
