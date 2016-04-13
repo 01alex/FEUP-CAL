@@ -61,18 +61,35 @@ int main(){
 
 	//readDataBase();
 
+
+	//tests
 	Intersection source(0, -2, 2);
-	Intersection target(1, 3, 5);
+	Intersection target1(1, 3, 5);
 	Intersection target2(2, 6, 8);
+	Intersection target3(3, 4, 5);
+
 
 	map.addVertex(source);
-	map.addVertex(target);
+	map.addVertex(target1);
 	map.addVertex(target2);
+	map.addVertex(target3);
 
-	map.addEdge(source, target, "belga", 35);
-	map.addEdge(target, target2, "polsky", 15);
+
+	map.addEdge(source, target1, "belga", 35);
+	map.addEdge(source, target2, "polsky", 13);
+	map.addEdge(target1, target3, "rinus", 20);
+	map.addEdge(target2, target3, "aveia", 20);
 
 	map.Dijkstra(source);
+
+	vector<int> v = map.getPath(source, target3);
+
+	cout << "v.size() " << v.size() << endl;
+
+	for(unsigned i=0; i<map.getPath(source, target3).size(); i++)
+		cout << map.getPath(source, target3)[i] << endl;
+	//
+
 
 	return 0;
 

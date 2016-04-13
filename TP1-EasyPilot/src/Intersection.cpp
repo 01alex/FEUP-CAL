@@ -22,6 +22,15 @@ bool Intersection::operator ==(const Intersection& p2) const {
 
 	if(this->id == p2.getID())
 		return true;
+
 	return false;
 
+}
+
+bool Intersection::operator !=(const Intersection &p2) const{
+
+	if(this->id != p2.getID())
+		return true;
+
+	return false;
 }

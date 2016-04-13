@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <climits>
+#include <list>
 #include <iostream>
 #include <queue>
 using namespace std;
@@ -200,6 +201,7 @@ public:
 	bool removeEdge(const T &source, const T &dest);		//TODO
 
 	void Dijkstra(const T &start);
+	vector<int> getPath(const T &source, const T &dest);
 };
 
 template <class T>
@@ -328,8 +330,34 @@ void Graph<T>::Dijkstra(const T &start){		//baseado teorica 06.grafos2_a
 		}
 	}
 
-	cout << pq[0]->getDistance() << endl;
+	cout << pq[0]->getDistance() << endl;				//a apagar\
 
+}
+
+template<class T>
+vector<int> Graph<T>::getPath(const T &source, const T &dest){
+
+	Vertex<T> *v = vertexSet[addVertex(dest)];
+	list<T> aux;
+
+	aux.push_front(v->getIntersection());
+
+	while(v->path != NULL && v->path->getIntersection() != source){
+		v = v->path;
+		aux.push_back(v->getIntersection());
+	}
+
+	if( v->path != NULL )
+		aux.push_front(v->path->getIntersection());
+
+
+	vector<int> paths;
+	while( !aux.empty() ) {
+		paths.push_back( aux.front().getID() );
+		aux.pop_front();
+	}
+
+	return paths;
 }
 
 

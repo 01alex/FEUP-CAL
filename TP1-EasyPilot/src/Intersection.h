@@ -17,6 +17,7 @@ public:
 	int getID() const;
 	Coordenadas getCoord() const;
 	bool operator == (const Intersection &p2) const;
+	bool operator != (const Intersection &p2) const;
 	friend ostream & operator << (ostream &os, Intersection &p);
 };
 
