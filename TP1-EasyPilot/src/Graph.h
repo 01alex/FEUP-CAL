@@ -317,18 +317,18 @@ void Graph<T>::Dijkstra(const T &start){		//baseado teorica 06.grafos2_a
 
 	while(!pq.empty()){
 
-		Vertex<T> *v = pq.front();
+		s = pq.front(); // diferente do git daquele gaj
 		pop_heap(pq.begin(), pq.end());
 		pq.pop_back();
 
-		for(unsigned i=0; i<v->adj.size(); i++){
+		for(unsigned i=0; i<s->adj.size(); i++){
 
-			Vertex<T> *w = v->adj[i].dest;
+			Vertex<T> *w = s->adj[i].dest;
 
-			if( (v->distance + v->adj[i].length) < w->distance){
+			if( (s->distance + s->adj[i].length) < w->distance){
 
-				w->setDistance(v->distance + v->adj[i].length);
-				w->path = v;
+				w->setDistance(s->distance + s->adj[i].length);
+				w->path = s;
 
 				if(!w->processing){
 					w->processing = true;
@@ -342,6 +342,11 @@ void Graph<T>::Dijkstra(const T &start){		//baseado teorica 06.grafos2_a
 
 	cout << pq[0]->getDistance() << endl;				//a apagar\
 
+	/*vector<T> returnVector;
+		for(int i = 0; i < pq.size(); i++){
+			returnVector.push_back(pq[i]->getInfo());
+		}*/
+
 }
 
 template<class T>
@@ -354,7 +359,7 @@ vector<T> Graph<T>::getPath(const T &source, const T &dest){
 
 	while(v->path != NULL && v->path->getIntersection() != source){
 		v = v->path;
-		aux.push_back(v->getIntersection());
+		aux.push_front(v->getIntersection());
 	}
 
 	if( v->path != NULL )
