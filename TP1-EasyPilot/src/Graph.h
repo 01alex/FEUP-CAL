@@ -201,7 +201,17 @@ public:
 	bool removeEdge(const T &source, const T &dest);		//TODO
 
 	void Dijkstra(const T &start);
-	vector<int> getPath(const T &source, const T &dest);
+	vector<T> getPath(const T &source, const T &dest);
+
+	int getFirstID(int id) {
+		for(int i = 0; i < vertexSet.size(); i++) {
+			if(vertexSet[i]->getIntersection().getID() == id && vertexSet[i]->getIntersection().getID() >= 0) {
+				return vertexSet[i]->getIntersection().getID();
+			}
+		}
+		return -1;
+	}
+
 };
 
 template <class T>
@@ -335,7 +345,7 @@ void Graph<T>::Dijkstra(const T &start){		//baseado teorica 06.grafos2_a
 }
 
 template<class T>
-vector<int> Graph<T>::getPath(const T &source, const T &dest){
+vector<T> Graph<T>::getPath(const T &source, const T &dest){
 
 	Vertex<T> *v = vertexSet[addVertex(dest)];
 	list<T> aux;
@@ -351,9 +361,9 @@ vector<int> Graph<T>::getPath(const T &source, const T &dest){
 		aux.push_front(v->path->getIntersection());
 
 
-	vector<int> paths;
+	vector<T> paths;
 	while( !aux.empty() ) {
-		paths.push_back( aux.front().getID() );
+		paths.push_back( aux.front() );
 		aux.pop_front();
 	}
 
