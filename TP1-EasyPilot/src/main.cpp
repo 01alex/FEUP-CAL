@@ -68,7 +68,8 @@ void readDataBase(string path){
 
 	cout << "Nodes: " << map->getNumVertex() << endl;
 
-	//drawPathGV(map->getVertexSet()[map->getVertexByID(894)]->getIntersection(), map->getVertexSet()[map->getVertexByID(895)]->getIntersection());
+	map->Dijkstra(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection());
+	drawPathGV(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection(), map->getVertexSet()[map->getVertexByID(28566)]->getIntersection());
 	//cout << "Edges: " << counteradj << endl;
 	//cout << "Indegrees: " << counterindeg << endl;
 
@@ -220,7 +221,7 @@ void drawPathGV(Intersection source, Intersection target){
 	if(map->findVertex(source) > -1 && map->findVertex(target) > -1){
 
 		for(unsigned i=0; i<map->getPath(source, target).size(); i++){
-			gv->addNode(map->getPath(source, target)[i].getID(), map->getPath(source, target)[i].getCoord().x, map->getPath(source, target)[i].getCoord().y);
+			gv->addNode(map->getPath(source, target)[i].getID(), convertGeoCordToPixel(map->getPath(source, target)[i].getCoord().x, map->getPath(source, target)[i].getCoord().y)[0], convertGeoCordToPixel(map->getPath(source, target)[i].getCoord().x, map->getPath(source, target)[i].getCoord().y)[1]);
 			gv->setVertexLabel(map->getPath(source, target)[i].getID(), "Cruzamento");
 			gv->setVertexColor(map->getPath(source, target)[i].getID(), "red");
 		}
@@ -245,7 +246,7 @@ int main(){
 
 	readDataBase(dbpath);
 
-	loadMap();
+	//loadMap();
 
 	//menu();
 	getchar();
