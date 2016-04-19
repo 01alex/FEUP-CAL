@@ -155,29 +155,49 @@ class Edge { // ruas
 	Vertex<T> * dest;
 	string name;
 	float length;
+	static int ID;
+	int thisID;
 
 public:
 	Edge(Vertex<T> *d, string n, float l);
+	Edge();
 
-	Vertex<T> getDest() const;
+	Vertex<T>* getDest() const;
+	string getName() const;
 	float getLength() const;
+	int getID() const;
 
 	friend class Graph<T>;
 	friend class Vertex<T>;
 };
 
-template <class T>
-Edge<T>::Edge(Vertex<T> *d, string n, float l): dest(d), name(n), length(l){}
+template<class T>
+int Edge<T>::ID = 0;
 
+template <class T>
+Edge<T>::Edge(Vertex<T> *d, string n, float l): dest(d), name(n), length(l), thisID(ID++){}
+
+template <class T>
+Edge<T>::Edge(): thisID(ID++){}
 
 template<class T>
-inline Vertex<T> Edge<T>::getDest() const {
+inline Vertex<T>* Edge<T>::getDest() const {
 	return dest;
+}
+
+template<class T>
+inline string Edge<T>::getName() const{
+	return name;
 }
 
 template<class T>
 inline float Edge<T>::getLength() const {
 	return length;
+}
+
+template<class T>
+inline int Edge<T>::getID() const {
+	return thisID;
 }
 
 
@@ -192,7 +212,7 @@ class Graph {
 
 public:
 	vector<Vertex<T> *> getVertexSet() const;
-	int getNumVertex() const;
+	unsigned int getNumVertex() const;
 
 	int addVertex(const T &in);		//devolve posicao do vetor em que se encontra o vertice, push_back se nao existia e devolve vector.size();
 	bool addEdge(const T &sourc, const T &dest, string name, float length);
@@ -220,7 +240,7 @@ vector<Vertex<T> * > Graph<T>::getVertexSet() const {
 }
 
 template <class T>
-int Graph<T>::getNumVertex() const {
+unsigned int Graph<T>::getNumVertex() const {
 	return vertexSet.size();
 }
 

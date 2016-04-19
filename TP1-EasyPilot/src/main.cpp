@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <string>
+#include <math.h>
 #include "graphviewer.h"
 #include "GraphicData.h"
 
@@ -16,9 +17,15 @@ vector<graphicData> dg;
 #define NOT_DYNAMIC false
 #define DEFAULT_COLOR "black"
 
+#define PI 3.14159265
+#define WIDTH 995
+#define HEIGHT 829
+
+
+
 void readDataBase(){
 
-	ifstream dataBase("TP1-EasyPilot/res/Data.txt");		//**pode variar
+	ifstream dataBase("res/Data.txt");		//**pode variar
 	string line;
 	string args[10];		//0-id	1-nome	2-source	3-target	4-km	5-kmh	6-x1	7-y1	8-x2	9-y2
 
@@ -34,67 +41,91 @@ void readDataBase(){
 			i++;
 		}
 
-		/*Intersection source(atoi(args[2].c_str()), atof(args[6].c_str()), atof(args[7].c_str()));
+		Intersection source(atoi(args[2].c_str()), atof(args[6].c_str()), atof(args[7].c_str()));
 		Intersection target(atoi(args[3].c_str()), atof(args[8].c_str()), atof(args[9].c_str()));
 
 		map.addVertex(source);
 		map.addVertex(target);
 
-		map.addEdge(source, target, args[1], atof(args[4].c_str()));*/
-
-
-		float x1 = atof(args[2].c_str());
-		float y1 = atof(args[3].c_str());
-		int id = atoi(args[2].c_str());
-
-		/*float xf1 = (x1) * 600 / 180;
-		float yf1 = y1 * 600 / 360;*/
-
-
-
-		if((map.addVertex(Intersection (atoi(args[2].c_str()), atof(args[6].c_str()), atof(args[7].c_str()))) > 0))
-		{
-
-			gv->addNode(atoi(args[2].c_str()), x1, y1);
-			gv->setVertexLabel(atoi(args[2].c_str()),"teste");
-			gv->setVertexColor( atof(args[2].c_str()), "green");
-		}
-		else
-		{
-			gv->setVertexColor(id, "black");
-
-		}
-
+		map.addEdge(source, target, args[1], atof(args[4].c_str()));
 
 	}
 
+
 	// tests
-	int counteradj=0, counterindeg=0;
+	/*int counteradj=0, counterindeg=0;
 	for(unsigned int i=0; i<map.getNumVertex(); i++){
+
 		counteradj += map.getVertexSet()[i]->getAdj().size();
 		counterindeg += map.getVertexSet()[i]->getIndegree();
 		//cout << "Adj: " << map.getVertexSet()[i]->getAdj().size() << endl;			//com origem no no
 		//cout << "Indegree: " << map.getVertexSet()[i]->getIndegree() << endl;		//apontam para o no
-	}
+	}*/
 
 	cout << "Nodes: " << map.getNumVertex() << endl;
-	cout << "Edges: " << counteradj << endl;
-	cout << "Indegrees: " << counterindeg << endl;
-	//
+
+	//cout << "Edges: " << counteradj << endl;
+	//cout << "Indegrees: " << counterindeg << endl;
 
 }
 
 void loadMap() {
 
-	gv = new GraphViewer(600, 600, NOT_DYNAMIC);
-	gv->setBackground("TP1-EasyPilot/res/background.png");
-	gv->createWindow(600, 600);
-	gv->defineVertexColor(DEFAULT_COLOR);
-	gv->defineEdgeColor(DEFAULT_COLOR);
+	gv = new GraphViewer(WIDTH, HEIGHT, false);
+	gv->setBackground("res/background.png");
+	gv->createWindow(WIDTH, HEIGHT);
+	//gv->defineVertexColor(DEFAULT_COLOR);
+	//gv->defineEdgeColor(DEFAULT_COLOR);
 
-	readDataBase();
+	int x, y, ids, idd;
+
+	float longLeft = -8.647, longRight = -8.55;
+	float latBottom = 41.065, latTop = 41.185;
+
+	float deltaLong = longRight - longLeft;
+	float bottomDegree = latBottom * PI / 180;
+
+	float worldMapWidth = ((WIDTH / deltaLong) * 360) / (2 * PI);
+	float windowOffsetY = (worldMapWidth / 2 * log((1 + sin(bottomDegree)) / (1 - sin(bottomDegree))));
+
+
+	for(unsigned i=0; i<map.getNumVertex(); i++){
+
+		Intersection source = map.getVertexSet()[i]->getIntersection();
+		ids = source.getID();
+
+		x = (source.getCoord().x - longLeft) * (WIDTH / deltaLong);
+		y = HEIGHT - ((worldMapWidth / 2 * log((1 + sin(source.getCoord().y * PI / 180) ) / (1 - sin(source.getCoord().y * PI / 180) ))) - windowOffsetY);
+
+		gv->addNode(ids, x, y);
+		gv->setVertexLabel(ids, "Cruzamento");
+		gv->setVertexColor(ids, "red");
+
+
+		for(unsigned j=0; j<map.getVertexSet()[i]->getAdj().size(); j++){
+
+			Intersection dest = map.getVertexSet()[i]->getAdj()[j].getDest()->getIntersection();
+			idd = dest.getID();
+
+			x = (dest.getCoord().x - longLeft) * (WIDTH / deltaLong);
+			y = HEIGHT - ((worldMapWidth / 2 * log((1 + sin(dest.getCoord().y * PI / 180) ) / (1 - sin(dest.getCoord().y * PI / 180) ))) - windowOffsetY);
+
+			gv->addNode(idd, x, y);
+
+			gv->setVertexLabel(idd, "Cruzamento");
+			gv->setVertexColor(idd, "green");
+
+			gv->addEdge(map.getVertexSet()[i]->getAdj()[j].getID(), ids, idd, EdgeType::DIRECTED);
+			gv->setEdgeLabel(map.getVertexSet()[i]->getAdj()[j].getID(), map.getVertexSet()[i]->getAdj()[j].getName());
+
+			cout << map.getVertexSet()[i]->getAdj()[j].getID() << endl;
+
+		}
+	}
 
 	gv->rearrange();
+
+	return;
 
 }
 
@@ -154,11 +185,10 @@ void menu() {
 
 int main(){
 
+	readDataBase();
 	loadMap();
-	menu();
+	//menu();
 	getchar();
-
-
 
 
 	//tests
