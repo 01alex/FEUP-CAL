@@ -11,6 +11,9 @@
 #include "graphviewer.h"
 #include "GraphicData.h"
 
+#include <iomanip>
+#include <locale>
+
 Graph<Intersection> *map;
 GraphViewer *gv;
 vector<graphicData> dg;
@@ -21,6 +24,8 @@ vector<graphicData> dg;
 #define WIDTH 995
 #define HEIGHT 829
 
+
+void drawPathGV(Intersection source, Intersection target);
 
 void readDataBase(string path){
 
@@ -51,7 +56,6 @@ void readDataBase(string path){
 		map->addEdge(source, target, args[1], atof(args[4].c_str()));
 	}
 
-
 	// tests
 	/*int counteradj=0, counterindeg=0;
 	for(unsigned int i=0; i<map->getNumVertex(); i++){
@@ -64,20 +68,16 @@ void readDataBase(string path){
 
 	cout << "Nodes: " << map->getNumVertex() << endl;
 
+	//drawPathGV(map->getVertexSet()[map->getVertexByID(894)]->getIntersection(), map->getVertexSet()[map->getVertexByID(895)]->getIntersection());
 	//cout << "Edges: " << counteradj << endl;
 	//cout << "Indegrees: " << counterindeg << endl;
 
 }
 
-void loadMap() {
 
-	gv = new GraphViewer(WIDTH, HEIGHT, false);
-	gv->setBackground("res/background.png");
-	gv->createWindow(WIDTH, HEIGHT);
-	//gv->defineVertexColor(DEFAULT_COLOR);
-	//gv->defineEdgeColor(DEFAULT_COLOR);
+vector<float> convertGeoCordToPixel(float lon, float lat){
 
-	int x, y, ids, idd;
+	vector<float> res;
 
 	float longLeft = -8.647, longRight = -8.55;
 	float latBottom = 41.065, latTop = 41.185;
@@ -88,17 +88,41 @@ void loadMap() {
 	float worldMapWidth = ((WIDTH / deltaLong) * 360) / (2 * PI);
 	float windowOffsetY = (worldMapWidth / 2 * log((1 + sin(bottomDegree)) / (1 - sin(bottomDegree))));
 
+	res.push_back((lon - longLeft) * (WIDTH / deltaLong));		//res[0] = x
+
+	res.push_back( HEIGHT -((worldMapWidth / 2 * log((1 + sin(lat * PI / 180) ) / (1 - sin(lat * PI / 180) ))) - windowOffsetY));		//res[1] = y
+
+	return res;
+}
+
+
+void loadMap() {
+
+	gv = new GraphViewer(WIDTH, HEIGHT, false);
+	gv->setBackground("res/background.png");
+	gv->createWindow(WIDTH, HEIGHT);
+	//gv->defineVertexColor(DEFAULT_COLOR);
+	//gv->defineEdgeColor(DEFAULT_COLOR);
+
+	float x, y;
+	int ids, idd;
 
 	for(unsigned i=0; i<map->getNumVertex(); i++){
 
 		Intersection source = map->getVertexSet()[i]->getIntersection();
 		ids = source.getID();
 
-		x = (source.getCoord().x - longLeft) * (WIDTH / deltaLong);
-		y = HEIGHT - ((worldMapWidth / 2 * log((1 + sin(source.getCoord().y * PI / 180) ) / (1 - sin(source.getCoord().y * PI / 180) ))) - windowOffsetY);
+		x = convertGeoCordToPixel(source.getCoord().x, source.getCoord().y)[0];
+		y = convertGeoCordToPixel(source.getCoord().x, source.getCoord().y)[1];
+
+		//cout << x << " " << y << endl;
 
 		gv->addNode(ids, x, y);
-		gv->setVertexLabel(ids, "Cruzamento");
+
+		ostringstream convert;
+		convert << ids;
+
+		gv->setVertexLabel(ids, convert.str());
 		gv->setVertexColor(ids, "red");
 
 
@@ -107,20 +131,24 @@ void loadMap() {
 			Intersection dest = map->getVertexSet()[i]->getAdj()[j].getDest()->getIntersection();
 			idd = dest.getID();
 
-			x = (dest.getCoord().x - longLeft) * (WIDTH / deltaLong);
-			y = HEIGHT - ((worldMapWidth / 2 * log((1 + sin(dest.getCoord().y * PI / 180) ) / (1 - sin(dest.getCoord().y * PI / 180) ))) - windowOffsetY);
+			x = convertGeoCordToPixel(dest.getCoord().x, dest.getCoord().y)[0];
+			y = convertGeoCordToPixel(dest.getCoord().x, dest.getCoord().y)[1];
 
 			gv->addNode(idd, x, y);
 
-			gv->setVertexLabel(idd, "Cruzamento");
+			ostringstream convert2;
+			convert2 << idd;
+
+			gv->setVertexLabel(idd, convert2.str());
 			gv->setVertexColor(idd, "green");
 
 			gv->addEdge(map->getVertexSet()[i]->getAdj()[j].getID(), ids, idd, EdgeType::DIRECTED);
 			gv->setEdgeLabel(map->getVertexSet()[i]->getAdj()[j].getID(), map->getVertexSet()[i]->getAdj()[j].getName());
 
-			cout << map->getVertexSet()[i]->getAdj()[j].getID() << endl;
+			//cout << map->getVertexSet()[i]->getAdj()[j].getID() << endl;
 
 		}
+
 	}
 
 	gv->rearrange();
@@ -128,6 +156,7 @@ void loadMap() {
 	return;
 
 }
+
 
 int getEdgeID(int a, int b) {
 	for(int i = 0; i < dg.size(); i++) {
@@ -137,6 +166,7 @@ int getEdgeID(int a, int b) {
 	}
 	return -1;
 }
+
 
 void menu() {
 	system("CLS");
@@ -155,8 +185,6 @@ void menu() {
 			cout << "A rua que pretende ir e invalida: " << endl;
 			return;
 		}
-
-
 
 		Intersection destInt = map->getVertexSet()[origem]->getIntersection();
 		map->Dijkstra(map->getVertexSet()[origem]->getIntersection());
@@ -181,6 +209,34 @@ void menu() {
 		gv->rearrange();
 		getchar();
 	}
+}
+
+void drawPathGV(Intersection source, Intersection target){
+
+	gv = new GraphViewer(WIDTH, HEIGHT, false);
+	gv->setBackground("res/background.png");
+	gv->createWindow(WIDTH, HEIGHT);
+
+	if(map->findVertex(source) > -1 && map->findVertex(target) > -1){
+
+		for(unsigned i=0; i<map->getPath(source, target).size(); i++){
+			gv->addNode(map->getPath(source, target)[i].getID(), map->getPath(source, target)[i].getCoord().x, map->getPath(source, target)[i].getCoord().y);
+			gv->setVertexLabel(map->getPath(source, target)[i].getID(), "Cruzamento");
+			gv->setVertexColor(map->getPath(source, target)[i].getID(), "red");
+		}
+
+	}
+
+	cout << "Tamanho Path: " << map->getPath(source, target).size() << endl;
+
+	cout << map->getVertexSet()[map->findVertex(source)]->getIntersection().getCoord().x << endl;
+	cout << map->getVertexSet()[map->findVertex(source)]->getIntersection().getCoord().y << endl;
+	cout << map->getVertexSet()[map->findVertex(target)]->getIntersection().getCoord().x << endl;
+	cout << map->getVertexSet()[map->findVertex(target)]->getIntersection().getCoord().y << endl;
+
+	cout << map->findVertex(source) << endl;
+	cout << map->findVertex(target) << endl;
+	gv->rearrange();
 }
 
 int main(){

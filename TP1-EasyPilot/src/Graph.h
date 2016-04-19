@@ -226,6 +226,9 @@ public:
 	void Dijkstra(const T &start);
 	vector<T> getPath(const T &source, const T &dest);
 
+	int findVertex(const T &f);			//pela interseccao
+	int getVertexByID(int id);			//pelo id da interseccao
+
 	int getFirstID(int id) {
 		for(int i = 0; i < vertexSet.size(); i++) {
 			if(vertexSet[i]->getIntersection().getID() == id && vertexSet[i]->getIntersection().getID() >= 0) {
@@ -392,14 +395,36 @@ vector<T> Graph<T>::getPath(const T &source, const T &dest){
 		aux.push_front(v->path->getIntersection());
 
 
-	vector<T> paths;
+	vector<T> path;
 	while( !aux.empty() ) {
-		paths.push_back( aux.front() );
+		path.push_back( aux.front() );
 		aux.pop_front();
 	}
 
-	return paths;
+	return path;
 }
 
+template<class T>
+inline int Graph<T>::findVertex(const T& f) {
+
+	for(unsigned i=0; i<getNumVertex(); i++){
+		if(vertexSet[i]->getIntersection() == f)
+			return i;
+	}
+
+	return -1;		// se nao encontra
+
+}
+
+template<class T>
+inline int Graph<T>::getVertexByID(int id) {
+
+	for(unsigned i=0; i<getNumVertex(); i++){
+		if(vertexSet[i]->getIntersection().getID() == id)
+			return i;
+	}
+
+	return -1;		// se nao encontra
+}
 
 #endif /* GRAPH_H_ */
