@@ -47,7 +47,7 @@ public:
 	void setIndegree(int i);
 
 	bool addEdge(Edge<T> &edge);
-	int findEdge(Vertex<T> v);		//retorna posicao no vetor adj se existir, se nao -1
+	int findEdge(Vertex<T> &v);		//retorna posicao no vetor adj se existir, se nao -1
 
 	int findSmallestAdj(); 			//retorna posicao no vetor adj da aresta mais pequena ligada a este nó
 	friend class Graph<T>;
@@ -117,7 +117,7 @@ inline bool Vertex<T>::addEdge(Edge<T> &edge) {
 }
 
 template<class T>
-inline int Vertex<T>::findEdge(Vertex<T> v) {
+inline int Vertex<T>::findEdge(Vertex<T> &v) {
 
 	for(unsigned int i = 0; i < adj.size(); i++){
 		if(adj[i].dest->getIntersection() == v.getIntersection())
@@ -211,6 +211,9 @@ class Graph {
 	vector<Vertex<T> *> vertexSet;
 
 public:
+
+	Graph();
+
 	vector<Vertex<T> *> getVertexSet() const;
 	unsigned int getNumVertex() const;
 
@@ -233,6 +236,9 @@ public:
 	}
 
 };
+
+template<class T>
+inline Graph<T>::Graph() {}
 
 template <class T>
 vector<Vertex<T> * > Graph<T>::getVertexSet() const {

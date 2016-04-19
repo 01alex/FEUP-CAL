@@ -11,10 +11,10 @@
 #include "graphviewer.h"
 #include "GraphicData.h"
 
-Graph<Intersection> map;
+Graph<Intersection> *map;
 GraphViewer *gv;
 vector<graphicData> dg;
-#define NOT_DYNAMIC false
+
 #define DEFAULT_COLOR "black"
 
 #define PI 3.14159265
@@ -22,10 +22,11 @@ vector<graphicData> dg;
 #define HEIGHT 829
 
 
+void readDataBase(string path){
 
-void readDataBase(){
+	map = new Graph<Intersection>();
 
-	ifstream dataBase("res/Data.txt");		//**pode variar
+	ifstream dataBase(path.c_str());		//**pode variar
 	string line;
 	string args[10];		//0-id	1-nome	2-source	3-target	4-km	5-kmh	6-x1	7-y1	8-x2	9-y2
 
@@ -44,25 +45,24 @@ void readDataBase(){
 		Intersection source(atoi(args[2].c_str()), atof(args[6].c_str()), atof(args[7].c_str()));
 		Intersection target(atoi(args[3].c_str()), atof(args[8].c_str()), atof(args[9].c_str()));
 
-		map.addVertex(source);
-		map.addVertex(target);
+		map->addVertex(source);
+		map->addVertex(target);
 
-		map.addEdge(source, target, args[1], atof(args[4].c_str()));
-
+		map->addEdge(source, target, args[1], atof(args[4].c_str()));
 	}
 
 
 	// tests
 	/*int counteradj=0, counterindeg=0;
-	for(unsigned int i=0; i<map.getNumVertex(); i++){
+	for(unsigned int i=0; i<map->getNumVertex(); i++){
 
-		counteradj += map.getVertexSet()[i]->getAdj().size();
-		counterindeg += map.getVertexSet()[i]->getIndegree();
-		//cout << "Adj: " << map.getVertexSet()[i]->getAdj().size() << endl;			//com origem no no
-		//cout << "Indegree: " << map.getVertexSet()[i]->getIndegree() << endl;		//apontam para o no
+		counteradj += map->getVertexSet()[i]->getAdj().size();
+		counterindeg += map->getVertexSet()[i]->getIndegree();
+		//cout << "Adj: " << map->getVertexSet()[i]->getAdj().size() << endl;			//com origem no no
+		//cout << "Indegree: " << map->getVertexSet()[i]->getIndegree() << endl;		//apontam para o no
 	}*/
 
-	cout << "Nodes: " << map.getNumVertex() << endl;
+	cout << "Nodes: " << map->getNumVertex() << endl;
 
 	//cout << "Edges: " << counteradj << endl;
 	//cout << "Indegrees: " << counterindeg << endl;
@@ -89,9 +89,9 @@ void loadMap() {
 	float windowOffsetY = (worldMapWidth / 2 * log((1 + sin(bottomDegree)) / (1 - sin(bottomDegree))));
 
 
-	for(unsigned i=0; i<map.getNumVertex(); i++){
+	for(unsigned i=0; i<map->getNumVertex(); i++){
 
-		Intersection source = map.getVertexSet()[i]->getIntersection();
+		Intersection source = map->getVertexSet()[i]->getIntersection();
 		ids = source.getID();
 
 		x = (source.getCoord().x - longLeft) * (WIDTH / deltaLong);
@@ -102,9 +102,9 @@ void loadMap() {
 		gv->setVertexColor(ids, "red");
 
 
-		for(unsigned j=0; j<map.getVertexSet()[i]->getAdj().size(); j++){
+		for(unsigned j=0; j<map->getVertexSet()[i]->getAdj().size(); j++){
 
-			Intersection dest = map.getVertexSet()[i]->getAdj()[j].getDest()->getIntersection();
+			Intersection dest = map->getVertexSet()[i]->getAdj()[j].getDest()->getIntersection();
 			idd = dest.getID();
 
 			x = (dest.getCoord().x - longLeft) * (WIDTH / deltaLong);
@@ -115,10 +115,10 @@ void loadMap() {
 			gv->setVertexLabel(idd, "Cruzamento");
 			gv->setVertexColor(idd, "green");
 
-			gv->addEdge(map.getVertexSet()[i]->getAdj()[j].getID(), ids, idd, EdgeType::DIRECTED);
-			gv->setEdgeLabel(map.getVertexSet()[i]->getAdj()[j].getID(), map.getVertexSet()[i]->getAdj()[j].getName());
+			gv->addEdge(map->getVertexSet()[i]->getAdj()[j].getID(), ids, idd, EdgeType::DIRECTED);
+			gv->setEdgeLabel(map->getVertexSet()[i]->getAdj()[j].getID(), map->getVertexSet()[i]->getAdj()[j].getName());
 
-			cout << map.getVertexSet()[i]->getAdj()[j].getID() << endl;
+			cout << map->getVertexSet()[i]->getAdj()[j].getID() << endl;
 
 		}
 	}
@@ -158,16 +158,16 @@ void menu() {
 
 
 
-		Intersection destInt = map.getVertexSet()[origem]->getIntersection();
-		map.Dijkstra(map.getVertexSet()[origem]->getIntersection());
-		vector <Intersection> path = map.getPath(map.getVertexSet()[origem]->getIntersection(), map.getVertexSet()[destino]->getIntersection());
+		Intersection destInt = map->getVertexSet()[origem]->getIntersection();
+		map->Dijkstra(map->getVertexSet()[origem]->getIntersection());
+		vector <Intersection> path = map->getPath(map->getVertexSet()[origem]->getIntersection(), map->getVertexSet()[destino]->getIntersection());
 		system("CLS");
 		Intersection last;
 		cout << "O caminho mais curto: " << endl;
 		for(unsigned int i = 0; i < path.size(); i++){
 			if(i > 0){
-				int id1 = map.getFirstID(last.getID());
-				int id2 = map.getFirstID(path[i].getID());
+				int id1 = map->getFirstID(last.getID());
+				int id2 = map->getFirstID(path[i].getID());
 				gv->setEdgeColor(getEdgeID(id1,id2), "green");
 				gv->setEdgeThickness(getEdgeID(id1,id2), 8);
 			}
@@ -185,8 +185,12 @@ void menu() {
 
 int main(){
 
-	readDataBase();
+	string dbpath = "res/Data.txt";
+
+	readDataBase(dbpath);
+
 	loadMap();
+
 	//menu();
 	getchar();
 
@@ -199,29 +203,29 @@ int main(){
 
 
 
-	map.addVertex(source);
+	map->addVertex(source);
 	cout << "x: " << rX << endl;
 	cout << "y: " << rY << endl;
 	gv->addNode(0, rX, rY);
-	map.addVertex(target1);
+	map->addVertex(target1);
 	//gv->addNode(0,219, 25);
-	map.addVertex(target2);
-	map.addVertex(target3);
+	map->addVertex(target2);
+	map->addVertex(target3);
 
 
-	map.addEdge(source, target1, "belga", 35);
-	map.addEdge(source, target2, "polsky", 13);
-	map.addEdge(target1, target3, "rinus", 20);
-	map.addEdge(target2, target3, "aveia", 20);
+	map->addEdge(source, target1, "belga", 35);
+	map->addEdge(source, target2, "polsky", 13);
+	map->addEdge(target1, target3, "rinus", 20);
+	map->addEdge(target2, target3, "aveia", 20);
 
-	map.Dijkstra(source);
+	map->Dijkstra(source);
 
-	vector<int> v = map.getPath(source, target3);
+	vector<int> v = map->getPath(source, target3);
 
 	cout << "v.size() " << v.size() << endl;
 
-	for(unsigned i=0; i<map.getPath(source, target3).size(); i++)
-		cout << map.getPath(source, target3)[i] << endl;*/
+	for(unsigned i=0; i<map->getPath(source, target3).size(); i++)
+		cout << map->getPath(source, target3)[i] << endl;*/
 	//
 
 
