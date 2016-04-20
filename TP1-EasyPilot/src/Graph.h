@@ -30,7 +30,6 @@ class Vertex { //cruzamentos
 	bool processing;
 
 public:
-	Vertex *path;
 
 	Vertex(T in);
 
@@ -49,6 +48,8 @@ public:
 	bool addEdge(Edge<T> &edge);
 	int findEdge(Vertex<T> &v);		//retorna posicao no vetor adj se existir, se nao -1
 
+	Vertex *path;
+
 	int findSmallestAdj(); 			//retorna posicao no vetor adj da aresta mais pequena ligada a este nó
 	friend class Graph<T>;
 };
@@ -61,7 +62,7 @@ struct vertex_greater_than {
 };
 
 template <class T>
-Vertex<T>::Vertex(T in): intersect(in), visited(false), indegree(0), processing(false){}
+Vertex<T>::Vertex(T in): intersect(in), visited(false), indegree(0), processing(false){path = NULL;}
 
 
 template<class T>
@@ -238,6 +239,8 @@ public:
 		return -1;
 	}
 
+	friend class Vertex<T>;
+
 };
 
 template<class T>
@@ -291,9 +294,10 @@ inline bool Graph<T>::addEdge(const T& sourc, const T& dest, string name, float 
 	}
 
 	if(foundS && foundD){
-		Edge<T> *edg = new Edge<T>(vertexSet[posDest], name, length);
 
-		vertexSet[posSource]->addEdge(*edg);
+		Edge<T> edg(vertexSet[posDest], name, length);
+
+		vertexSet[posSource]->addEdge(edg);
 		vertexSet[posDest]->indegree++;
 
 	}

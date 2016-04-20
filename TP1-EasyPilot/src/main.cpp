@@ -54,7 +54,9 @@ void readDataBase(string path){
 		map->addVertex(target);
 
 		map->addEdge(source, target, args[1], atof(args[4].c_str()));
+
 	}
+
 
 	// tests
 	/*int counteradj=0, counterindeg=0;
@@ -68,8 +70,11 @@ void readDataBase(string path){
 
 	cout << "Nodes: " << map->getNumVertex() << endl;
 
+
 	map->Dijkstra(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection());
 	drawPathGV(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection(), map->getVertexSet()[map->getVertexByID(28566)]->getIntersection());
+
+
 	//cout << "Edges: " << counteradj << endl;
 	//cout << "Indegrees: " << counterindeg << endl;
 
@@ -89,9 +94,9 @@ vector<float> convertGeoCordToPixel(float lon, float lat){
 	float worldMapWidth = ((WIDTH / deltaLong) * 360) / (2 * PI);
 	float windowOffsetY = (worldMapWidth / 2 * log((1 + sin(bottomDegree)) / (1 - sin(bottomDegree))));
 
-	res.push_back((lon - longLeft) * (WIDTH / deltaLong));		//res[0] = x
+	res.push_back( ((lon - longLeft) * (WIDTH / deltaLong)));		//res[0] = x
 
-	res.push_back( HEIGHT -((worldMapWidth / 2 * log((1 + sin(lat * PI / 180) ) / (1 - sin(lat * PI / 180) ))) - windowOffsetY));		//res[1] = y
+	res.push_back( (HEIGHT -((worldMapWidth / 2 * log((1 + sin(lat * PI / 180) ) / (1 - sin(lat * PI / 180) ))) - windowOffsetY)) );		//res[1] = y
 
 	return res;
 }
@@ -102,6 +107,8 @@ void loadMap() {
 	gv = new GraphViewer(WIDTH, HEIGHT, false);
 	gv->setBackground("res/background.png");
 	gv->createWindow(WIDTH, HEIGHT);
+	gv->setVertexSize(0.1, 0.1);
+
 	//gv->defineVertexColor(DEFAULT_COLOR);
 	//gv->defineEdgeColor(DEFAULT_COLOR);
 
@@ -222,8 +229,46 @@ void drawPathGV(Intersection source, Intersection target){
 
 		for(unsigned i=0; i<map->getPath(source, target).size(); i++){
 			gv->addNode(map->getPath(source, target)[i].getID(), convertGeoCordToPixel(map->getPath(source, target)[i].getCoord().x, map->getPath(source, target)[i].getCoord().y)[0], convertGeoCordToPixel(map->getPath(source, target)[i].getCoord().x, map->getPath(source, target)[i].getCoord().y)[1]);
-			gv->setVertexLabel(map->getPath(source, target)[i].getID(), "Cruzamento");
-			gv->setVertexColor(map->getPath(source, target)[i].getID(), "red");
+
+			ostringstream id;
+			id << map->getPath(source, target)[i].getID();
+
+			gv->setVertexLabel(map->getPath(source, target)[i].getID(), id.str());
+			gv->setVertexColor(map->getPath(source, target)[i].getID(), id.str());
+
+
+			int idSource = map->getPath(source, target)[i].getID();			//source id
+
+			cout << "i1: " << i << " idSource: " << idSource << " Distancia: " << map->getVertexSet()[map->getVertexByID(idSource)]->getDistance() << endl;
+
+			int indexSource = map->getVertexByID(idSource);
+
+			cout << "i2: " << i << " indexSource: " << indexSource << " Distancia: " << map->getVertexSet()[indexSource]->getDistance() << endl;
+
+
+
+
+
+			//PROB no path
+
+
+			cout << endl << map->getVertexSet()[indexSource]->path->getIntersection().getID() << endl;
+
+			int idTarget = map->getVertexSet()[indexSource]->path->getIntersection().getID();			//target id
+
+			cout << "i3: " << i << " idTarget: " << idTarget << endl;
+
+			int indexTarget = map->getVertexSet()[indexSource]->findEdge(*map->getVertexSet()[indexSource]->path);		//posicao no vetor adj de source da aresta que aponta para target
+
+			cout << i << endl;
+
+			int idEdge = map->getVertexSet()[indexSource]->getAdj()[indexTarget].getID();		//edge id
+
+
+
+			gv->addEdge(idEdge, idSource, idTarget, EdgeType::DIRECTED); //id edge, id source, id destino, type
+
+
 		}
 
 	}
@@ -246,7 +291,7 @@ int main(){
 
 	readDataBase(dbpath);
 
-	//loadMap();
+	loadMap();
 
 	//menu();
 	getchar();
