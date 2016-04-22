@@ -47,6 +47,7 @@ public:
 
 	bool addEdge(Edge<T> &edge);
 	int findEdge(Vertex<T> &v);		//retorna posicao no vetor adj se existir, se nao -1
+	int findEdgeByID(int id);
 
 	Vertex *path;
 
@@ -128,6 +129,16 @@ inline int Vertex<T>::findEdge(Vertex<T> &v) {
 	return -1;
 }
 
+template<class T>
+inline int Vertex<T>::findEdgeByID(int id){
+
+	for(unsigned int i = 0; i < adj.size(); i++){
+			if(adj[i].dest->getIntersection().getID() == id)
+				return i;
+		}
+
+		return -1;
+}
 
 template<class T>
 inline int Vertex<T>::findSmallestAdj() {
@@ -373,13 +384,7 @@ void Graph<T>::Dijkstra(const T &start){		//baseado teorica 06.grafos2_a
 		}
 	}
 
-	cout << pq[0]->getDistance() << endl;				//a apagar\
-
-	/*vector<T> returnVector;
-		for(int i = 0; i < pq.size(); i++){
-			returnVector.push_back(pq[i]->getInfo());
-		}*/
-
+	//cout << pq[0]->getDistance() << endl;				//a apagar
 }
 
 template<class T>

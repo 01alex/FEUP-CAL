@@ -11,8 +11,6 @@
 #include "graphviewer.h"
 #include "GraphicData.h"
 
-#include <iomanip>
-#include <locale>
 
 Graph<Intersection> *map;
 GraphViewer *gv;
@@ -123,8 +121,6 @@ void loadMap() {
 		x = convertGeoCordToPixel(source.getCoord().x, source.getCoord().y)[0];
 		y = convertGeoCordToPixel(source.getCoord().x, source.getCoord().y)[1];
 
-		//cout << x << " " << y << endl;
-
 		gv->addNode(ids, x, y);
 
 		ostringstream convert;
@@ -227,7 +223,13 @@ void drawPathGV(Intersection source, Intersection target){
 
 	if(map->findVertex(source) > -1 && map->findVertex(target) > -1){
 
+		cout << "Tamanho Path: " << map->getPath(source, target).size() << endl;
+
+		cout << "Source index: " << map->findVertex(source) << " Source id: " << map->getVertexSet()[map->findVertex(source)]->getIntersection().getID() << endl;
+		cout << "Target index: " << map->findVertex(target) << " Target id: " << map->getVertexSet()[map->findVertex(target)]->getIntersection().getID() << endl;
+
 		for(unsigned i=0; i<map->getPath(source, target).size(); i++){
+
 			gv->addNode(map->getPath(source, target)[i].getID(), convertGeoCordToPixel(map->getPath(source, target)[i].getCoord().x, map->getPath(source, target)[i].getCoord().y)[0], convertGeoCordToPixel(map->getPath(source, target)[i].getCoord().x, map->getPath(source, target)[i].getCoord().y)[1]);
 
 			ostringstream id;
@@ -236,52 +238,30 @@ void drawPathGV(Intersection source, Intersection target){
 			gv->setVertexLabel(map->getPath(source, target)[i].getID(), id.str());
 			gv->setVertexColor(map->getPath(source, target)[i].getID(), id.str());
 
+			int indexS, indexN;
 
-			int idSource = map->getPath(source, target)[i].getID();			//source id
+			indexS = map->findVertex(map->getPath(source, target)[i]);
 
-			cout << "i1: " << i << " idSource: " << idSource << " Distancia: " << map->getVertexSet()[map->getVertexByID(idSource)]->getDistance() << endl;
+			indexN = map->findVertex(map->getPath(source, target)[i+1]);
 
-			int indexSource = map->getVertexByID(idSource);
+			cout << "index: " << indexS << " id: " << map->getPath(source, target)[i].getID() << endl;
 
-			cout << "i2: " << i << " indexSource: " << indexSource << " Distancia: " << map->getVertexSet()[indexSource]->getDistance() << endl;
+			if(indexN > -1){
 
+				cout << "index next: " << indexN << " id next: " << map->getPath(source, target)[i+1].getID() << endl;
 
+				int idEdge;
 
+				idEdge = map->getVertexSet()[indexS]->getAdj()[map->getVertexSet()[indexS]->findEdgeByID(map->getVertexSet()[indexN]->getIntersection().getID())].getID();
 
+				gv->addEdge(idEdge, map->getPath(source, target)[i].getID(), map->getPath(source, target)[i+1].getID(), EdgeType::DIRECTED); //id edge, id source, id destino, type
 
-			//PROB no path
-
-
-			cout << endl << map->getVertexSet()[indexSource]->path->getIntersection().getID() << endl;
-
-			int idTarget = map->getVertexSet()[indexSource]->path->getIntersection().getID();			//target id
-
-			cout << "i3: " << i << " idTarget: " << idTarget << endl;
-
-			int indexTarget = map->getVertexSet()[indexSource]->findEdge(*map->getVertexSet()[indexSource]->path);		//posicao no vetor adj de source da aresta que aponta para target
-
-			cout << i << endl;
-
-			int idEdge = map->getVertexSet()[indexSource]->getAdj()[indexTarget].getID();		//edge id
-
-
-
-			gv->addEdge(idEdge, idSource, idTarget, EdgeType::DIRECTED); //id edge, id source, id destino, type
-
+			}
 
 		}
 
 	}
 
-	cout << "Tamanho Path: " << map->getPath(source, target).size() << endl;
-
-	cout << map->getVertexSet()[map->findVertex(source)]->getIntersection().getCoord().x << endl;
-	cout << map->getVertexSet()[map->findVertex(source)]->getIntersection().getCoord().y << endl;
-	cout << map->getVertexSet()[map->findVertex(target)]->getIntersection().getCoord().x << endl;
-	cout << map->getVertexSet()[map->findVertex(target)]->getIntersection().getCoord().y << endl;
-
-	cout << map->findVertex(source) << endl;
-	cout << map->findVertex(target) << endl;
 	gv->rearrange();
 }
 
@@ -291,46 +271,11 @@ int main(){
 
 	readDataBase(dbpath);
 
-	loadMap();
+	//loadMap();
 
 	//menu();
+
 	getchar();
 
-
-	//tests
-	/*Intersection source(0, -2, 2);
-	Intersection target1(1, 3, 5);
-	Intersection target2(2, 6, 8);
-	Intersection target3(3, 4, 5);
-
-
-
-	map->addVertex(source);
-	cout << "x: " << rX << endl;
-	cout << "y: " << rY << endl;
-	gv->addNode(0, rX, rY);
-	map->addVertex(target1);
-	//gv->addNode(0,219, 25);
-	map->addVertex(target2);
-	map->addVertex(target3);
-
-
-	map->addEdge(source, target1, "belga", 35);
-	map->addEdge(source, target2, "polsky", 13);
-	map->addEdge(target1, target3, "rinus", 20);
-	map->addEdge(target2, target3, "aveia", 20);
-
-	map->Dijkstra(source);
-
-	vector<int> v = map->getPath(source, target3);
-
-	cout << "v.size() " << v.size() << endl;
-
-	for(unsigned i=0; i<map->getPath(source, target3).size(); i++)
-		cout << map->getPath(source, target3)[i] << endl;*/
-	//
-
-
 	return 0;
-
 }
