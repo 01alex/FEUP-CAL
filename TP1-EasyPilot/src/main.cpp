@@ -51,30 +51,31 @@ void readDataBase(string path){
 		map->addVertex(source);
 		map->addVertex(target);
 
-		map->addEdge(source, target, args[1], atof(args[4].c_str()));
+		map->addEdge(source, target, args[1], atof(args[4].c_str()), atof(args[5].c_str()));
 
 	}
 
 
-	// tests
-	/*int counteradj=0, counterindeg=0;
-	for(unsigned int i=0; i<map->getNumVertex(); i++){
-
-		counteradj += map->getVertexSet()[i]->getAdj().size();
-		counterindeg += map->getVertexSet()[i]->getIndegree();
-		//cout << "Adj: " << map->getVertexSet()[i]->getAdj().size() << endl;			//com origem no no
-		//cout << "Indegree: " << map->getVertexSet()[i]->getIndegree() << endl;		//apontam para o no
-	}*/
-
 	cout << "Nodes: " << map->getNumVertex() << endl;
 
+	//map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection());
+	map->DijkstraFastestPath(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection());
 
-	map->Dijkstra(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection());
 	drawPathGV(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection(), map->getVertexSet()[map->getVertexByID(28566)]->getIntersection());
 
 
-	//cout << "Edges: " << counteradj << endl;
-	//cout << "Indegrees: " << counterindeg << endl;
+	/* TESTS
+	int counteradj=0, counterindeg=0;
+		for(unsigned int i=0; i<map->getNumVertex(); i++){
+
+			counteradj += map->getVertexSet()[i]->getAdj().size();
+			counterindeg += map->getVertexSet()[i]->getIndegree();
+			//cout << "Adj: " << map->getVertexSet()[i]->getAdj().size() << endl;			//com origem no no
+			//cout << "Indegree: " << map->getVertexSet()[i]->getIndegree() << endl;		//apontam para o no
+	}
+
+	cout << "Edges: " << counteradj << endl;
+	cout << "Indegrees: " << counterindeg << endl; */
 
 }
 
@@ -149,8 +150,6 @@ void loadMap() {
 			gv->addEdge(map->getVertexSet()[i]->getAdj()[j].getID(), ids, idd, EdgeType::DIRECTED);
 			gv->setEdgeLabel(map->getVertexSet()[i]->getAdj()[j].getID(), map->getVertexSet()[i]->getAdj()[j].getName());
 
-			//cout << map->getVertexSet()[i]->getAdj()[j].getID() << endl;
-
 		}
 
 	}
@@ -191,7 +190,7 @@ void menu() {
 		}
 
 		Intersection destInt = map->getVertexSet()[origem]->getIntersection();
-		map->Dijkstra(map->getVertexSet()[origem]->getIntersection());
+		map->DijkstraShortestPath(map->getVertexSet()[origem]->getIntersection());
 		vector <Intersection> path = map->getPath(map->getVertexSet()[origem]->getIntersection(), map->getVertexSet()[destino]->getIntersection());
 		system("CLS");
 		Intersection last;
@@ -244,7 +243,9 @@ void drawPathGV(Intersection source, Intersection target){
 
 			indexN = map->findVertex(map->getPath(source, target)[i+1]);
 
-			cout << "index: " << indexS << " id: " << map->getPath(source, target)[i].getID() << endl;
+			//cout << "index: " << indexS << " id: " << map->getPath(source, target)[i].getID() << " distance: " << map->getVertexSet()[map->findVertex(map->getPath(source, target)[i])]->getDistance() << "km" << endl;					//if DijkstraShortestPath
+
+			cout << "index: " << indexS << " id: " << map->getPath(source, target)[i].getID() << " time: " << map->getVertexSet()[map->findVertex(map->getPath(source, target)[i])]->getTime() << "h" << endl;						//if DijkstraFastestPath
 
 			if(indexN > -1){
 

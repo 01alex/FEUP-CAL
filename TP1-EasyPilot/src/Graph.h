@@ -26,6 +26,7 @@ class Vertex { //cruzamentos
 	vector<Edge<T> > adj;
 	bool visited;
 	float distance;
+	float time;
 	int indegree;		//numero arestas que apontam para este no
 	bool processing;
 
@@ -41,6 +42,9 @@ public:
 
 	float getDistance() const;
 	void setDistance(float d);
+
+	float getTime() const;
+	void setTime(float t);
 
 	int getIndegree() const;
 	void setIndegree(int i);
@@ -59,6 +63,13 @@ template <class T>
 struct vertex_greater_than {
 	bool operator()(Vertex<T> * a, Vertex<T> * b) const {
 		return a->getDistance() > b->getDistance();
+	}
+};
+
+template <class T>
+struct vertex_greater_than_time {
+	bool operator()(Vertex<T> * a, Vertex<T> * b) const {
+		return a->getTime() > b->getTime();
 	}
 };
 
@@ -98,6 +109,16 @@ inline void Vertex<T>::setDistance(float d) {
 	this->distance = d;
 }
 
+template<class T>
+inline float Vertex<T>::getTime() const{
+	return time;
+}
+
+template<class T>
+inline void Vertex<T>::setTime(float t){
+	this->time = t;
+}
+
 
 template<class T>
 inline int Vertex<T>::getIndegree() const {
@@ -133,11 +154,11 @@ template<class T>
 inline int Vertex<T>::findEdgeByID(int id){
 
 	for(unsigned int i = 0; i < adj.size(); i++){
-			if(adj[i].dest->getIntersection().getID() == id)
-				return i;
-		}
+		if(adj[i].dest->getIntersection().getID() == id)
+			return i;
+	}
 
-		return -1;
+	return -1;
 }
 
 template<class T>
@@ -167,16 +188,18 @@ class Edge { // ruas
 	Vertex<T> * dest;
 	string name;
 	float length;
+	float vMax;
 	static int ID;
 	int thisID;
 
 public:
-	Edge(Vertex<T> *d, string n, float l);
+	Edge(Vertex<T> *d, string n, float l, float vm);
 	Edge();
 
 	Vertex<T>* getDest() const;
 	string getName() const;
 	float getLength() const;
+	float getVMax() const;
 	int getID() const;
 
 	friend class Graph<T>;
@@ -187,7 +210,7 @@ template<class T>
 int Edge<T>::ID = 0;
 
 template <class T>
-Edge<T>::Edge(Vertex<T> *d, string n, float l): dest(d), name(n), length(l), thisID(ID++){}
+Edge<T>::Edge(Vertex<T> *d, string n, float l, float vm): dest(d), name(n), length(l), vMax(vm), thisID(ID++){}
 
 template <class T>
 Edge<T>::Edge(): thisID(ID++){}
@@ -205,6 +228,11 @@ inline string Edge<T>::getName() const{
 template<class T>
 inline float Edge<T>::getLength() const {
 	return length;
+}
+
+template<class T>
+inline float Edge<T>::getVMax() const{
+	return vMax;
 }
 
 template<class T>
@@ -230,12 +258,13 @@ public:
 	unsigned int getNumVertex() const;
 
 	int addVertex(const T &in);		//devolve posicao do vetor em que se encontra o vertice, push_back se nao existia e devolve vector.size();
-	bool addEdge(const T &sourc, const T &dest, string name, float length);
+	bool addEdge(const T &sourc, const T &dest, string name, float length, float vm);
 
 	bool removeVertex(const T &in);							//TODO
 	bool removeEdge(const T &source, const T &dest);		//TODO
 
-	void Dijkstra(const T &start);
+	void DijkstraShortestPath(const T &start);
+	void DijkstraFastestPath(const T &start);
 	vector<T> getPath(const T &source, const T &dest);
 
 	int findVertex(const T &f);			//pela interseccao
@@ -283,7 +312,7 @@ inline int Graph<T>::addVertex(const T& in) {
 }
 
 template<class T>
-inline bool Graph<T>::addEdge(const T& sourc, const T& dest, string name, float length) {		//adiciona aos adj do vsrc o edge(vdest) e incrementa o indegree do vdest
+inline bool Graph<T>::addEdge(const T& sourc, const T& dest, string name, float length, float vm) {		//adiciona aos adj do vsrc o edge(vdest) e incrementa o indegree do vdest
 
 	bool foundS = false, foundD = false;
 	int posSource = -1, posDest = -1;
@@ -306,7 +335,7 @@ inline bool Graph<T>::addEdge(const T& sourc, const T& dest, string name, float 
 
 	if(foundS && foundD){
 
-		Edge<T> edg(vertexSet[posDest], name, length);
+		Edge<T> edg(vertexSet[posDest], name, length, vm);
 
 		vertexSet[posSource]->addEdge(edg);
 		vertexSet[posDest]->indegree++;
@@ -342,7 +371,7 @@ bool Graph<T>::removeEdge(const T &source, const T &dest){
 
 
 template<class T>
-void Graph<T>::Dijkstra(const T &start){		//baseado teorica 06.grafos2_a
+void Graph<T>::DijkstraShortestPath(const T &start){		//baseado teorica 06.grafos2_a
 
 	for(unsigned i=0; i<getNumVertex(); i++){
 		vertexSet[i]->path = NULL;
@@ -386,6 +415,51 @@ void Graph<T>::Dijkstra(const T &start){		//baseado teorica 06.grafos2_a
 
 	//cout << pq[0]->getDistance() << endl;				//a apagar
 }
+
+template<class T>
+void Graph<T>::DijkstraFastestPath(const T &start){		//baseado teorica 06.grafos2_a
+
+	for(unsigned i=0; i<getNumVertex(); i++){
+		vertexSet[i]->path = NULL;
+		vertexSet[i]->setTime(INFINITY);
+		vertexSet[i]->processing = false;
+	}
+
+	Vertex<T> *s = vertexSet[addVertex(start)];
+	s->setTime(0);
+
+	vector<Vertex<T>*> pq;
+
+	pq.push_back(s);
+
+	make_heap(pq.begin(), pq.end());
+
+	while(!pq.empty()){
+
+		s = pq.front();
+		pop_heap(pq.begin(), pq.end());
+		pq.pop_back();
+
+		for(unsigned i=0; i<s->adj.size(); i++){
+
+			Vertex<T> *w = s->adj[i].dest;
+
+			if( (s->time + (s->adj[i].length / s->adj[i].getVMax())) < w->time){
+
+				w->setTime(s->time + (s->adj[i].length / s->adj[i].getVMax()));
+				w->path = s;
+
+				if(!w->processing){
+					w->processing = true;
+					pq.push_back(w);
+				}
+
+				make_heap(pq.begin(), pq.end(), vertex_greater_than_time<T>());
+			}
+		}
+	}
+}
+
 
 template<class T>
 vector<T> Graph<T>::getPath(const T &source, const T &dest){
