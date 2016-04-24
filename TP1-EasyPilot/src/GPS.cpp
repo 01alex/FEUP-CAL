@@ -38,9 +38,9 @@ void readDataBase(string path){
 	cout << "Nodes: " << map->getNumVertex() << endl;
 
 	//map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection());
-	map->DijkstraFastestPath(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection());
+	//map->DijkstraFastestPath(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection());
 
-	drawPathGV(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection(), map->getVertexSet()[map->getVertexByID(28566)]->getIntersection());
+	//drawPathGV(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection(), map->getVertexSet()[map->getVertexByID(28566)]->getIntersection());
 
 
 	/* TESTS
@@ -83,10 +83,12 @@ vector<float> convertGeoCordToPixel(float lon, float lat){
 
 
 void drawPathGV(Intersection source, Intersection target){
-
+	cout << "aqui no inicio" << endl;
 	gv = new GraphViewer(WIDTH, HEIGHT, false);
 	gv->setBackground("res/background.png");
 	gv->createWindow(WIDTH, HEIGHT);
+
+	cout <<endl<< "aqui!" << endl;
 
 	if(map->findVertex(source) > -1 && map->findVertex(target) > -1){
 
@@ -261,43 +263,55 @@ void GPSMenu(){
 	int origem;
 	int destino;
 
+	//while(destino = origem)
 
-	destino = origem;
+	cout << endl << "Rua de origem(vertice)(1012 pa testar): ";
+	cin >>origem;
 
-	while(destino == origem) {
-		cout << "Qual e a rua de destino: " << endl;
-		cin >> destino;
-		if(destino == origem) {
-			cout << "A rua que pretende ir e invalida: " << endl;
-			return;
-		}
-
-		Intersection destInt = map->getVertexSet()[origem]->getIntersection();
-		map->DijkstraShortestPath(map->getVertexSet()[origem]->getIntersection());
-		vector <Intersection> path = map->getPath(map->getVertexSet()[origem]->getIntersection(), map->getVertexSet()[destino]->getIntersection());
-		system("CLS");
-		Intersection last;
-		cout << "O caminho mais curto: " << endl;
-		for(unsigned int i = 0; i < path.size(); i++){
-			if(i > 0){
-				int id1 = map->getFirstID(last.getID());
-				int id2 = map->getFirstID(path[i].getID());
-				gv->setEdgeColor(getEdgeID(id1,id2), "green");
-				gv->setEdgeThickness(getEdgeID(id1,id2), 8);
-			}
-			stringstream ss;
-			ss << path[i].getID() << " (linha " << path[i].getID() << ")";
-			string str = ss.str();
-			cout << str << endl;
-			last = path[i];
-		}
-
-		gv->rearrange();
-		getchar();
+	cout << "Qual e a rua de destino(28566 p testar): " << endl;
+	cin >> destino;
+	if(destino == origem) {
+		cout << "A rua que pretende ir e invalida: " << endl;
+		return;
 	}
 
+	//Intersection source = map->getVertexSet()[origem]->getIntersection();
+
+	//Intersection dest = map->getVertexSet()[destino]->getIntersection();
 
 
+
+	//map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection());
+
+	map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection());
+	cout << "dijkstra complete" << endl;
+	drawPathGV(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destino)]->getIntersection());
+
+	/*vector <Intersection> path = map->getPath(map->getVertexSet()[origem]->getIntersection(), map->getVertexSet()[destino]->getIntersection());
+	Intersection last;
+	cout << "O caminho mais curto: " << endl;
+	for(unsigned int i = 0; i < path.size(); i++){
+		if(i > 0){
+			int id1 = map->getFirstID(last.getID());
+			int id2 = map->getFirstID(path[i].getID());
+			gv->setEdgeColor(getEdgeID(id1,id2), "green");
+			gv->setEdgeThickness(getEdgeID(id1,id2), 8);
+		}
+		stringstream ss;
+		ss << path[i].getID() << " (linha " << path[i].getID() << ")";
+		string str = ss.str();
+		cout << str << endl;
+		last = path[i];
+	}*/
+
+
+
+	//gv->rearrange();
+	//getchar();
+
+
+
+	return;
 
 }
 
