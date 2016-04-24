@@ -8,6 +8,7 @@ Intersection::Intersection(int ident, float x, float y){
 	this->id=ident;
 	this->coord.x=x;
 	this->coord.y=y;
+	this->IP =false;
 }
 
 int Intersection::getID() const{
@@ -25,6 +26,17 @@ bool Intersection::operator ==(const Intersection& p2) const {
 
 	return false;
 
+}
+
+void Intersection::setIP(bool p) {
+
+	this->IP = p;
+
+}
+
+bool Intersection::getIP(){
+
+	return this->IP;
 }
 
 bool Intersection::operator !=(const Intersection &p2) const{

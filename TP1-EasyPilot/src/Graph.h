@@ -15,7 +15,7 @@ using namespace std;
 template <class T> class Edge;
 template <class T> class Graph;
 
-const int INFINITY = INT_MAX;
+const int INF = INT_MAX;
 
 
 // VERTEX
@@ -375,7 +375,7 @@ void Graph<T>::DijkstraShortestPath(const T &start){		//baseado teorica 06.grafo
 
 	for(unsigned i=0; i<getNumVertex(); i++){
 		vertexSet[i]->path = NULL;
-		vertexSet[i]->setDistance(INFINITY);
+		vertexSet[i]->setDistance(INF);
 		vertexSet[i]->processing = false;
 	}
 
@@ -421,7 +421,7 @@ void Graph<T>::DijkstraFastestPath(const T &start){		//baseado teorica 06.grafos
 
 	for(unsigned i=0; i<getNumVertex(); i++){
 		vertexSet[i]->path = NULL;
-		vertexSet[i]->setTime(INFINITY);
+		vertexSet[i]->setTime(INF);
 		vertexSet[i]->processing = false;
 	}
 
