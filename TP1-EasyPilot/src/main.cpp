@@ -8,6 +8,8 @@ int main(){
 
 	readDataBase(dbpath);
 
+	menu();
+
 	//loadMap();
 
 	//addInterestPoints();

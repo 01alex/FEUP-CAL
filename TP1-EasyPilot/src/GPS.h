@@ -4,9 +4,11 @@
 #include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <cstdlib>
 #include <string.h>
 #include <string>
 #include <math.h>
+#include <iomanip>
 #include "graphviewer.h"
 #include "Intersection.h"
 #include "Graph.h"
@@ -65,5 +67,7 @@ int getEdgeID(int a, int b);
 
 void addInterestPointsMenu();
 
+
+void menu();
 
 

@@ -229,7 +229,7 @@ void addInterestPointsMenu(){ //funcao a chamar no menu para adicionar PI's pi's
 
 	while (add){
 
-		cout << "ID of vertice w/ interest point(-1 to exit): ";
+		cout << "ID do vertice a acrescentar um ponto de interesse(-1 to exit): ";
 		cin >> ind;
 		if(ind == -1){
 
@@ -239,13 +239,13 @@ void addInterestPointsMenu(){ //funcao a chamar no menu para adicionar PI's pi's
 		}
 		if(map->getVertexByID(ind) == -1){
 
-			cout << "Vertice not found" << endl;
+			cout << "Vertice nao encontrado" << endl;
 		}
 
 		else{
 
 			map->getVertexSet()[ind]->getIntersection().setIP(true);
-			cout << "IP added!" << endl;
+			cout << "PI adicionado!" << endl;
 
 		}
 	}
@@ -255,17 +255,15 @@ void addInterestPointsMenu(){ //funcao a chamar no menu para adicionar PI's pi's
 
 }
 
+void GPSMenu(){
 
-void menu() {
-	system("CLS");
 
 	int origem;
 	int destino;
 
-	cout << endl;
-	cout << "Onde se encontra?";
-	cin >> origem;
+
 	destino = origem;
+
 	while(destino == origem) {
 		cout << "Qual e a rua de destino: " << endl;
 		cin >> destino;
@@ -297,9 +295,63 @@ void menu() {
 		gv->rearrange();
 		getchar();
 	}
+
+
+
+
 }
 
 
+void menu() {
+	//system("CLS");
+
+	int escolha;
+	bool loop = true;
+
+
+	cout << endl;
+
+	do{
+
+
+		cout <<setw(20)<< "Menu Principal" << endl << endl;
+
+		cout << "1: Usar GPS" << endl;
+		cout << "2: Adicionar Ponte de Interesse" << endl;
+		cout << "3: Adicionar obras (FALTA IMPLEMENTAR)" << endl;
+		cin >> escolha;
+
+
+		switch(escolha)
+		{
+			case 1: GPSMenu();
+					break;
+
+
+			case 2: addInterestPointsMenu();
+					break;
+
+
+
+			default: break;
+		}
+
+		cout << "Voltar ao menu principal(S/N)? ";
+		char inp;
+		cin >>inp;
+
+		if(inp =='S')
+			loop = true;
+		else
+			loop = false;
+
+
+
+	}while(loop);
+
+
+
+}
 
 
 
