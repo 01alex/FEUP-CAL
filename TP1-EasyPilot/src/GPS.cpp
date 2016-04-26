@@ -40,7 +40,9 @@ void readDataBase(string path){
 	//map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection());
 	//map->DijkstraFastestPath(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection());
 
-	//drawPathGV(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection(), map->getVertexSet()[map->getVertexByID(28566)]->getIntersection());
+	map->aStar(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection(), map->getVertexSet()[map->getVertexByID(28566)]->getIntersection(), true);
+
+	drawPathGV(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection(), map->getVertexSet()[map->getVertexByID(28566)]->getIntersection());
 
 
 	/* TESTS
@@ -116,9 +118,9 @@ void drawPathGV(Intersection source, Intersection target){
 
 			indexN = map->findVertex(map->getPath(source, target)[i+1]);
 
-			//cout << "index: " << indexS << " id: " << map->getPath(source, target)[i].getID() << " distance: " << map->getVertexSet()[map->findVertex(map->getPath(source, target)[i])]->getDistance() << "km" << endl;					//if DijkstraShortestPath
+			cout << "index: " << indexS << " id: " << map->getPath(source, target)[i].getID() << " distance: " << map->getVertexSet()[map->findVertex(map->getPath(source, target)[i])]->getDistance() << "km" << endl;					//if DijkstraShortestPath
 
-			cout << "index: " << indexS << " id: " << map->getPath(source, target)[i].getID() << " time: " << map->getVertexSet()[map->findVertex(map->getPath(source, target)[i])]->getTime() << "h" << endl;						//if DijkstraFastestPath
+			//cout << "index: " << indexS << " id: " << map->getPath(source, target)[i].getID() << " time: " << map->getVertexSet()[map->findVertex(map->getPath(source, target)[i])]->getTime() << "h" << endl;						//if DijkstraFastestPath
 
 			if(indexN > -1){
 
@@ -281,11 +283,11 @@ void GPSMenu(){
 
 
 
-	//map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection());
+	map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection());
 
-	map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection());
+	//map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection());
 	cout << "dijkstra complete" << endl;
-	drawPathGV(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destino)]->getIntersection());
+	drawPathGV(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection(), map->getVertexSet()[map->getVertexByID(28566)]->getIntersection());
 
 	/*vector <Intersection> path = map->getPath(map->getVertexSet()[origem]->getIntersection(), map->getVertexSet()[destino]->getIntersection());
 	Intersection last;

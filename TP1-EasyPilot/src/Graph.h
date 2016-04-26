@@ -28,7 +28,7 @@ class Vertex { //cruzamentos
 	float distance;
 	float time;
 	int indegree;		//numero arestas que apontam para este no
-	bool processing;
+	bool processing, closed, inQueue;
 
 public:
 
@@ -55,6 +55,8 @@ public:
 
 	Vertex *path;
 
+	float fx;			//Astar
+
 	int findSmallestAdj(); 			//retorna posicao no vetor adj da aresta mais pequena ligada a este nó
 	friend class Graph<T>;
 };
@@ -72,6 +74,18 @@ struct vertex_greater_than_time {
 		return a->getTime() > b->getTime();
 	}
 };
+
+template <class T>
+struct vertex_greater_than_fx {
+	bool operator()(Vertex<T> * a, Vertex<T> * b) const {
+		return a->fx > b->fx;
+	}
+};
+
+template <class T>
+float heuristic_aStar(Vertex<T> *s, Vertex<T> *t, bool dt){
+	return (sqrt(pow(s->getIntersection().getCoord().x - t->getIntersection().getCoord().x, 2) + pow(s->getIntersection().getCoord().y - t->getIntersection().getCoord().y, 2)));
+}
 
 template <class T>
 Vertex<T>::Vertex(T in): intersect(in), visited(false), indegree(0), processing(false){path = NULL;}
@@ -265,6 +279,9 @@ public:
 
 	void DijkstraShortestPath(const T &start);
 	void DijkstraFastestPath(const T &start);
+
+	void aStar(const T &start, const T &goal, bool dist);
+
 	vector<T> getPath(const T &source, const T &dest);
 
 	int findVertex(const T &f);			//pela interseccao
@@ -282,6 +299,14 @@ public:
 	friend class Vertex<T>;
 
 };
+
+template<class T>
+void removeFromQueue(vector<Vertex<T>*> pq, const T &v){
+	for(unsigned i=0; i<pq.size(); i++){
+		if(pq[i]->getIntersection() == v)
+			pq.erase(pq.begin() + i);
+	}
+}
 
 template<class T>
 inline Graph<T>::Graph() {}
@@ -458,6 +483,97 @@ void Graph<T>::DijkstraFastestPath(const T &start){		//baseado teorica 06.grafos
 			}
 		}
 	}
+}
+
+
+template <class T>
+void Graph<T>::aStar(const T &start, const T &goal, bool dist){
+
+	for(unsigned i = 0; i < vertexSet.size(); i++) {
+		vertexSet[i]->path = NULL;
+		vertexSet[i]->distance = INF;
+		vertexSet[i]->fx = INF;
+		vertexSet[i]->closed = false;
+		vertexSet[i]->inQueue = false;
+	}
+
+	Vertex<T> *s = vertexSet[addVertex(start)];
+
+	s->setDistance(0);
+	s->fx = s->getDistance() + heuristic_aStar(s, vertexSet[addVertex(goal)], dist);
+
+	//priority_queue< VertexPtr<T>, vector< VertexPtr<T> >, CompareVertex<T> > nextVertices;
+
+	vector<Vertex<T>*> pq;		//nextVertices
+
+
+	pq.push_back(s);
+	s->inQueue = true;
+
+	//cout << s->getIntersection().getID() << endl;
+
+	make_heap(pq.begin(), pq.end());
+
+	while (!pq.empty()) {
+		Vertex<T> *current = pq.front();
+		pop_heap(pq.begin(), pq.end());
+		pq.pop_back();
+
+		current->inQueue = false;
+
+		if (current == vertexSet[addVertex(goal)]){
+			current->path = vertexSet[addVertex(goal)];
+			break;
+		}
+
+		current->closed = true;
+
+		for(unsigned i = 0; i < current->adj.size(); i++) {
+			Edge<T> edge = current->adj[i];
+			Vertex<T> *neighbour = edge.dest;
+
+			double weight = dist ? edge.length : neighbour->time;
+
+			if (!neighbour->closed) {
+				neighbour->distance = current->distance + weight;
+				neighbour->path = current;
+				neighbour->fx = neighbour->distance + heuristic_aStar(neighbour, vertexSet[addVertex(goal)], dist);
+
+				if(neighbour->inQueue)
+					removeFromQueue(pq, neighbour->getIntersection());
+				else neighbour->inQueue = true;
+
+				pq.push_back(vertexSet[addVertex(neighbour->getIntersection())]);
+
+			}
+
+			else if (current->distance + weight + heuristic_aStar(neighbour, vertexSet[addVertex(goal)], dist) < neighbour->fx){
+				neighbour->closed = false;
+				neighbour->distance = current->distance + weight;
+				neighbour->path = current;
+				neighbour->fx = neighbour->distance + heuristic_aStar(neighbour, vertexSet[addVertex(goal)], dist);
+
+				pq.push_back(vertexSet[addVertex(neighbour->getIntersection())]);
+
+				neighbour->inQueue = true;
+
+			}
+
+			cout << neighbour->path->getIntersection().getID() << endl;
+
+			make_heap(pq.begin(), pq.end(), vertex_greater_than_fx<T>());
+
+		}
+	}
+
+	cout << "PQ size: " << endl;
+	cout << pq.size() << endl;
+
+	for(unsigned i=0; i< pq.size(); i++){
+		cout << pq[i]->getIntersection().getID() << endl;
+	}
+
+	return;
 }
 
 

@@ -8,7 +8,7 @@ int main(){
 
 	readDataBase(dbpath);
 
-	menu();
+	//menu();
 
 	//loadMap();
 
