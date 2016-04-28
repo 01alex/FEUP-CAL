@@ -46,3 +46,6 @@ bool Intersection::operator !=(const Intersection &p2) const{
 
 	return false;
 }
+
+
+

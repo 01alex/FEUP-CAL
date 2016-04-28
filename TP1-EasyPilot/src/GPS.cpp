@@ -33,7 +33,7 @@ void readDataBase(string path){
 		Intersection source(atoi(args[2].c_str()), atof(args[6].c_str()), atof(args[7].c_str()));
 		Intersection target(atoi(args[3].c_str()), atof(args[8].c_str()), atof(args[9].c_str()));
 
-		/*if(atof(args[6].c_str()) > longitudeMin && atof(args[6].c_str()) < longitudeMax && atof(args[7].c_str()) > latitudeMin && atof(args[7].c_str() ) < latitudeMax )
+		if(atof(args[6].c_str()) > longitudeMin && atof(args[6].c_str()) < longitudeMax && atof(args[7].c_str()) > latitudeMin && atof(args[7].c_str() ) < latitudeMax )
 		{
 
 			if(atof(args[8].c_str()) > longitudeMin && atof(args[8].c_str()) < longitudeMax && atof(args[9].c_str()) > latitudeMin && atof(args[9].c_str() ) < latitudeMax )
@@ -46,12 +46,12 @@ void readDataBase(string path){
 
 			}
 
-		}*/
+		}
 
-		map->addVertex(source);
+		/*map->addVertex(source);
 		map->addVertex(target);
 
-		map->addEdge(source, target, args[1], atof(args[4].c_str()), atof(args[5].c_str()));
+		map->addEdge(source, target, args[1], atof(args[4].c_str()), atof(args[5].c_str()));*/
 
 	}
 
