@@ -8,10 +8,6 @@ void readDataBase(string path){
 
 	ofstream teste("teste.csv");
 
-	teste << "ITERACAO / TEMPO" << endl;
-
-
-
 	map = new Graph<Intersection>();
 
 	ifstream dataBase(path.c_str());		//**pode variar
@@ -33,26 +29,21 @@ void readDataBase(string path){
 		Intersection source(atoi(args[2].c_str()), atof(args[6].c_str()), atof(args[7].c_str()));
 		Intersection target(atoi(args[3].c_str()), atof(args[8].c_str()), atof(args[9].c_str()));
 
-		if(atof(args[6].c_str()) > longitudeMin && atof(args[6].c_str()) < longitudeMax && atof(args[7].c_str()) > latitudeMin && atof(args[7].c_str() ) < latitudeMax )
+		/*if(atof(args[6].c_str()) > longitudeMin && atof(args[6].c_str()) < longitudeMax && atof(args[7].c_str()) > latitudeMin && atof(args[7].c_str() ) < latitudeMax )
 		{
-
 			if(atof(args[8].c_str()) > longitudeMin && atof(args[8].c_str()) < longitudeMax && atof(args[9].c_str()) > latitudeMin && atof(args[9].c_str() ) < latitudeMax )
 			{
-
 				map->addVertex(source);
 				map->addVertex(target);
 
 				map->addEdge(source, target, args[1], atof(args[4].c_str()), atof(args[5].c_str()));
-
 			}
+		}*/
 
-		}
-
-		/*map->addVertex(source);
+		map->addVertex(source);
 		map->addVertex(target);
 
-		map->addEdge(source, target, args[1], atof(args[4].c_str()), atof(args[5].c_str()));*/
-
+		map->addEdge(source, target, args[1], atof(args[4].c_str()), atof(args[5].c_str()));
 	}
 
 
@@ -61,25 +52,19 @@ void readDataBase(string path){
 	clock_t t;
 	t = clock();
 
-	//map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(4750)]->getIntersection());
-	//map->DijkstraFastestPath(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection());
+	map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(4750)]->getIntersection());
+	//map->DijkstraFastestPath(map->getVertexSet()[map->getVertexByID(4750)]->getIntersection());
 
-	//map->aStar(map->getVertexSet()[map->getVertexByID(4750)]->getIntersection(), map->getVertexSet()[map->getVertexByID(2755)]->getIntersection(), false);
-
-	//for(int i = 0; i < 20; i++){
-	//map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(13257)]->getIntersection());
-	//drawPathGV(map->getVertexSet()[map->getVertexByID(4750)]->getIntersection(), map->getVertexSet()[map->getVertexByID(2755)]->getIntersection());		//map->aStar(map->getVertexSet()[map->getVertexByID(13257)]->getIntersection(), map->getVertexSet()[map->getVertexByID(1786)]->getIntersection(), true);
-
+	//map->aStar(map->getVertexSet()[map->getVertexByID(4750)]->getIntersection(), map->getVertexSet()[map->getVertexByID(2755)]->getIntersection(), true);
 
 	t = clock() - t;
 
 	float r = (float)t / CLOCKS_PER_SEC;
 
+	drawPathGV(map->getVertexSet()[map->getVertexByID(4750)]->getIntersection(), map->getVertexSet()[map->getVertexByID(2755)]->getIntersection());		//map->aStar(map->getVertexSet()[map->getVertexByID(13257)]->getIntersection(), map->getVertexSet()[map->getVertexByID(1786)]->getIntersection(), true);
 
 	cout << "TEMPO: " << setprecision(10) << r << endl;
 	cout << fixed;
-
-
 
 
 	/* TESTS
@@ -100,16 +85,13 @@ vector<float> convertGeoCordToPixel(float lon, float lat){
 
 	vector<float> res;
 
-	float longLeft = -8.647, longRight = -8.55;
-	float latBottom = 41.065, latTop = 41.185;
-
-	float deltaLong = longRight - longLeft;
-	float bottomDegree = latBottom * PI / 180;
+	float deltaLong = longitudeMax - longitudeMin;
+	float bottomDegree = latitudeMin * PI / 180;
 
 	float worldMapWidth = ((WIDTH / deltaLong) * 360) / (2 * PI);
 	float windowOffsetY = (worldMapWidth / 2 * log((1 + sin(bottomDegree)) / (1 - sin(bottomDegree))));
 
-	res.push_back( ((lon - longLeft) * (WIDTH / deltaLong)));		//res[0] = x
+	res.push_back( ((lon - longitudeMin) * (WIDTH / deltaLong)));		//res[0] = x
 
 	res.push_back( (HEIGHT -((worldMapWidth / 2 * log((1 + sin(lat * PI / 180) ) / (1 - sin(lat * PI / 180) ))) - windowOffsetY)) );		//res[1] = y
 
@@ -122,16 +104,12 @@ vector<float> convertGeoCordToPixel(float lon, float lat){
 
 
 void drawPathGV(Intersection source, Intersection target){
-	cout << "aqui no inicio" << endl;
 	gv = new GraphViewer(WIDTH, HEIGHT, false);
 	gv->setBackground("res/background.png");
 	gv->createWindow(WIDTH, HEIGHT);
 
-	cout <<endl<< "aqui!" << endl;
 
 	if(map->findVertex(source) > -1 && map->findVertex(target) > -1){
-
-
 
 		cout << "Tamanho Path: " << map->getPath(source, target).size() << endl;
 
@@ -141,16 +119,13 @@ void drawPathGV(Intersection source, Intersection target){
 
 		for(unsigned i=0; i<map->getPath(source, target).size(); i++){
 
-
-
-
 			gv->addNode(map->getPath(source, target)[i].getID(), convertGeoCordToPixel(map->getPath(source, target)[i].getCoord().x, map->getPath(source, target)[i].getCoord().y)[0], convertGeoCordToPixel(map->getPath(source, target)[i].getCoord().x, map->getPath(source, target)[i].getCoord().y)[1]);
 
 			ostringstream id;
 			id << map->getPath(source, target)[i].getID();
 
-			//gv->setVertexLabel(map->getPath(source, target)[i].getID(), id.str());
-			//gv->setVertexColor(map->getPath(source, target)[i].getID(), id.str());
+			gv->setVertexLabel(map->getPath(source, target)[i].getID(), id.str());
+			gv->setVertexColor(map->getPath(source, target)[i].getID(), id.str());
 
 			int indexS, indexN;
 
@@ -158,13 +133,12 @@ void drawPathGV(Intersection source, Intersection target){
 
 			indexN = map->findVertex(map->getPath(source, target)[i+1]);
 
-			cout << "index: " << indexS << " id: " << map->getPath(source, target)[i].getID() << " distance: " << map->getVertexSet()[map->findVertex(map->getPath(source, target)[i])]->getDistance() << "km" << endl;					//if DijkstraShortestPath
-
+			//cout << "index: " << indexS << " id: " << map->getPath(source, target)[i].getID() << " distance: " << map->getVertexSet()[map->findVertex(map->getPath(source, target)[i])]->getDistance() << "km" << endl;					//if DijkstraShortestPath
 			//cout << "index: " << indexS << " id: " << map->getPath(source, target)[i].getID() << " time: " << map->getVertexSet()[map->findVertex(map->getPath(source, target)[i])]->getTime() << "h" << endl;						//if DijkstraFastestPath
 
 			if(indexN > -1){
 
-				cout << "index next: " << indexN << " id next: " << map->getPath(source, target)[i+1].getID() << endl;
+				//cout << "index next: " << indexN << " id next: " << map->getPath(source, target)[i+1].getID() << endl;
 
 				int idEdge;
 
@@ -187,7 +161,7 @@ void drawPathGV(Intersection source, Intersection target){
 
 	}
 
-	//gv->rearrange();
+	gv->rearrange();
 }
 
 
@@ -255,17 +229,6 @@ void loadMap() {
 
 	return;
 
-}
-
-
-
-int getEdgeID(int a, int b) {
-	for(int i = 0; i < dg.size(); i++) {
-		if(dg[i].id_origem == a && dg[i].id_destino == b) {
-			return dg[i].id_aresta;
-		}
-	}
-	return -1;
 }
 
 
@@ -341,17 +304,14 @@ void GPSMenu(){
 
 
 
-	if(algorithm == 1){
+	if(algorithm == 1)
 		map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection());
-	}
 
-	else{
+	else
 		map->aStar(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destino)]->getIntersection(),1);
-	}
 
 
-
-	cout << "Algorithm complete" << endl;
+	//cout << "Algorithm complete" << endl;
 	drawPathGV(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destino)]->getIntersection());
 	cout << "Mapa desenhado!" << endl;
 
@@ -394,7 +354,6 @@ void menu() {
 
 	do{
 
-
 		cout <<setw(20)<< "Menu Principal" << endl << endl;
 
 		cout << "1: Usar GPS" << endl;
@@ -427,10 +386,46 @@ void menu() {
 			loop = false;
 
 
-
 	}while(loop);
 
+}
 
+int testEff(){
 
+	unsigned sample_size = 10000;
+	unsigned rdm1, rdm2;
+
+	ofstream teste;
+	teste.open("teste.csv");
+
+	srand (time(NULL));
+
+	for(unsigned i=0; i<sample_size; i++){
+		rdm1 = rand() % 100;
+		rdm2 = rand() % 100;
+
+		if(map->findVertex(map->getVertexSet()[rdm1]->getIntersection()) > -1 && map->findVertex(map->getVertexSet()[rdm2]->getIntersection()) > -1){
+
+			clock_t t;
+			t = clock();
+
+			//map->aStar(map->getVertexSet()[rdm1]->getIntersection(), map->getVertexSet()[rdm2]->getIntersection(), true);
+			//map->DijkstraShortestPath(map->getVertexSet()[rdm1]->getIntersection());
+
+			t = clock() - t;
+
+			float r = (float)t / CLOCKS_PER_SEC;
+
+			cout << "TEMPO: " << setprecision(10) << r << endl;
+			cout << fixed;
+
+			teste << r << endl;
+
+		}
+	}
+
+	teste.close();
+
+	return 0;
 }
 

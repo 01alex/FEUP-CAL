@@ -1,14 +1,14 @@
 #include "GPS.h"
 
-
-
 int main(){
 
 	string dbpath = "res/DataFull.txt";
 
 	readDataBase(dbpath);
 
-	menu();
+	//menu();
+
+	//testEff();
 
 	getchar();
 

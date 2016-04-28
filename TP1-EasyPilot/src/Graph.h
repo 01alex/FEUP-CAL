@@ -79,7 +79,7 @@ struct vertex_greater_than_time {
 template <class T>
 struct vertex_greater_than_fx {
 	bool operator()(Vertex<T> * a, Vertex<T> * b) const {
-		return a->fx < b->fx;
+		return a->fx > b->fx;
 	}
 };
 
@@ -193,8 +193,6 @@ inline int Vertex<T>::findSmallestAdj() {
 	return result;
 }
 
-
-
 /*template<class T>
 void Vertex<T>::updateFlood(Vertex<T> &vertex) {
 	if((vertex->closed != NULL) && (!(vertex->closed)))
@@ -208,7 +206,6 @@ void Vertex<T>::updateFlood(Vertex<T> &vertex) {
 
 	}
 }*/
-
 
 
 // EDGE
@@ -432,7 +429,7 @@ void Graph<T>::DijkstraShortestPath(const T &start){		//baseado teorica 06.grafo
 
 	while(!pq.empty()){
 
-		s = pq.front(); // diferente do git daquele gaj
+		s = pq.front();
 		pop_heap(pq.begin(), pq.end());
 		pq.pop_back();
 
@@ -455,7 +452,6 @@ void Graph<T>::DijkstraShortestPath(const T &start){		//baseado teorica 06.grafo
 		}
 	}
 
-	//cout << pq[0]->getDistance() << endl;				//a apagar
 }
 
 template<class T>
@@ -512,8 +508,6 @@ void Graph<T>::updateFlood(Vertex<T>* vertex, T goal) {
 
 	for(int i = 0; i < vertex->adj.size(); i++) {
 
-
-
 		vertex->adj[i].getDest()->setDistance(vertex->adj[i].getDest()->getDistance()  + vertex->adj[i].getLength());
 		vertex->adj[i].getDest()->fx = vertex->adj[i].getDest()->getDistance() + heuristic_aStar(vertex, vertexSet[addVertex(goal)],1);
 		updateFlood(vertex->adj[i].getDest(), goal);
@@ -524,20 +518,6 @@ void Graph<T>::updateFlood(Vertex<T>* vertex, T goal) {
 		updateFlood(vertex->adj[i].dest;*/
 
 	}
-
-	/* updateFlood(vertex) {
-	 * if(vertex->closed != NULL && !vertex->closed)
-	 * return;
-	 *
-	 * for(int i = 0; i < vertex->adj.size(); i++) {
-	 *
-	 * vertex->adj[i]->distance = vertex->distance + vertex->adj[i].length;
-	 * vertex->adj[i]->fx = vertex->adj[i]->distance + heuristic_aStar(neighbour, vertexSet[addVertex(goal)], dist);
-	 * updateFlood(vertex->adj[i].dest;
-	 *
-	 * }
-
-	 */
 }
 
 template <class T>
@@ -558,17 +538,14 @@ void Graph<T>::aStar(const T &start, const T &goal, bool dist){ //MAKE THIS BOOL
 	s->closed = false;
 	s->fx = s->getDistance() + heuristic_aStar(s, vertexSet[addVertex(goal)], dist);
 
-	//priority_queue< VertexPtr<T>, vector< VertexPtr<T> >, CompareVertex<T> > nextVertices;
-
 	vector<Vertex<T>*> pq;		//nextVertices
-
 
 	pq.push_back(s);
 	s->inQueue = true;
 
 	//cout << s->getIntersection().getID() << endl;
 
-	make_heap(pq.begin(), pq.end(), vertex_greater_than_fx<T>());
+	make_heap(pq.begin(), pq.end());
 
 	while (!pq.empty()) {
 		Vertex<T> *current = pq.front();
@@ -578,10 +555,9 @@ void Graph<T>::aStar(const T &start, const T &goal, bool dist){ //MAKE THIS BOOL
 
 		current->inQueue = false; //extra(?)
 
-		if (current == vertexSet[addVertex(goal)]){
-			//current->path = vertexSet[addVertex(goal)];
+		if (current == vertexSet[addVertex(goal)])
 			break;
-		}
+
 
 		current->closed = true;
 
@@ -622,42 +598,6 @@ void Graph<T>::aStar(const T &start, const T &goal, bool dist){ //MAKE THIS BOOL
 			}
 
 			make_heap(pq.begin(), pq.end(), vertex_greater_than_fx<T>());
-
-
-
-
-
-
-
-			/*if (!neighbour->closed) {
-				neighbour->distance = current->distance + weight;
-				neighbour->path = current;
-				neighbour->fx = neighbour->distance + heuristic_aStar(neighbour, vertexSet[addVertex(goal)], dist);
-
-
-				if(neighbour->inQueue){
-					removeFromQueue(pq, neighbour->getIntersection());
-				}
-				else neighbour->inQueue = true;
-
-				pq.push_back(vertexSet[addVertex(neighbour->getIntersection())]);
-
-			}
-
-			else if (current->distance + weight + heuristic_aStar(neighbour, vertexSet[addVertex(goal)], dist) < neighbour->fx){
-
-				neighbour->closed = false;
-				neighbour->distance = current->distance + weight;
-				neighbour->path = current;
-				neighbour->fx = neighbour->distance + heuristic_aStar(neighbour, vertexSet[addVertex(goal)], dist);
-
-				pq.push_back(vertexSet[addVertex(neighbour->getIntersection())]);
-
-				neighbour->inQueue = true;
-
-			}*/
-
-
 
 		}
 	}

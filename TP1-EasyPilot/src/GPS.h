@@ -9,6 +9,7 @@
 #include <string>
 #include <math.h>
 #include <iomanip>
+#include <time.h>
 #include "graphviewer.h"
 #include "Intersection.h"
 #include "Graph.h"
@@ -58,19 +59,38 @@ vector<float> convertGeoCordToPixel(float lon, float lat);
 
 /*
  *
- * desenha
+ * Desenha
  *
  *
  */
 
 void drawPathGV(Intersection source, Intersection target);
 
+/*
+ *
+ * Carregar Dadso
+ *
+ */
 
 void loadMap();
 
-int getEdgeID(int a, int b);
+
+/*
+ *
+ * Interface
+ *
+ */
+void menu();
 
 void addInterestPointsMenu();
 
+void GPSMenu();
 
-void menu();
+
+/*
+ *
+ * Teste Algoritmos
+ *
+ */
+
+int testEff();
