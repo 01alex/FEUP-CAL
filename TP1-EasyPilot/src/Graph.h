@@ -617,7 +617,7 @@ void Graph<T>::aStar(const T &start, const T &goal, bool dist){ //MAKE THIS BOOL
 					neighbour->path = current;
 					neighbour->distance = current->distance + weight;
 					neighbour->fx = neighbour->distance + heuristic_aStar(neighbour, vertexSet[addVertex(goal)], dist);
-					updateFlood(neighbour, goal);
+					//updateFlood(neighbour, goal);
 				}
 			}
 
