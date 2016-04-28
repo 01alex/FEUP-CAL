@@ -6,6 +6,12 @@ vector<graphicData> dg;
 
 void readDataBase(string path){
 
+	ofstream teste("teste.csv");
+
+	teste << "ITERACAO / TEMPO" << endl;
+
+
+
 	map = new Graph<Intersection>();
 
 	ifstream dataBase(path.c_str());		//**pode variar
@@ -27,6 +33,21 @@ void readDataBase(string path){
 		Intersection source(atoi(args[2].c_str()), atof(args[6].c_str()), atof(args[7].c_str()));
 		Intersection target(atoi(args[3].c_str()), atof(args[8].c_str()), atof(args[9].c_str()));
 
+		/*if(atof(args[6].c_str()) > longitudeMin && atof(args[6].c_str()) < longitudeMax && atof(args[7].c_str()) > latitudeMin && atof(args[7].c_str() ) < latitudeMax )
+		{
+
+			if(atof(args[8].c_str()) > longitudeMin && atof(args[8].c_str()) < longitudeMax && atof(args[9].c_str()) > latitudeMin && atof(args[9].c_str() ) < latitudeMax )
+			{
+
+				map->addVertex(source);
+				map->addVertex(target);
+
+				map->addEdge(source, target, args[1], atof(args[4].c_str()), atof(args[5].c_str()));
+
+			}
+
+		}*/
+
 		map->addVertex(source);
 		map->addVertex(target);
 
@@ -37,12 +58,28 @@ void readDataBase(string path){
 
 	cout << "Nodes: " << map->getNumVertex() << endl;
 
-	//map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection());
+	clock_t t;
+	t = clock();
+
+	//map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(4750)]->getIntersection());
 	//map->DijkstraFastestPath(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection());
 
-	map->aStar(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection(), map->getVertexSet()[map->getVertexByID(28566)]->getIntersection(), true);
+	map->aStar(map->getVertexSet()[map->getVertexByID(4750)]->getIntersection(), map->getVertexSet()[map->getVertexByID(2755)]->getIntersection(), false);
 
-	drawPathGV(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection(), map->getVertexSet()[map->getVertexByID(28566)]->getIntersection());
+	//for(int i = 0; i < 20; i++){
+	//map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(13257)]->getIntersection());
+	//drawPathGV(map->getVertexSet()[map->getVertexByID(17358)]->getIntersection(), map->getVertexSet()[map->getVertexByID(2755)]->getIntersection());		//map->aStar(map->getVertexSet()[map->getVertexByID(13257)]->getIntersection(), map->getVertexSet()[map->getVertexByID(1786)]->getIntersection(), true);
+
+
+	t = clock() - t;
+
+	float r = (float)t / CLOCKS_PER_SEC;
+
+
+	cout << "TEMPO: " << setprecision(10) << r << endl;
+	cout << fixed;
+
+
 
 
 	/* TESTS
@@ -85,10 +122,10 @@ vector<float> convertGeoCordToPixel(float lon, float lat){
 
 
 void drawPathGV(Intersection source, Intersection target){
-	cout << "aqui no inicio" << endl;
+	/*cout << "aqui no inicio" << endl;
 	gv = new GraphViewer(WIDTH, HEIGHT, false);
 	gv->setBackground("res/background.png");
-	gv->createWindow(WIDTH, HEIGHT);
+	gv->createWindow(WIDTH, HEIGHT);*/
 
 	cout <<endl<< "aqui!" << endl;
 
@@ -104,13 +141,13 @@ void drawPathGV(Intersection source, Intersection target){
 
 		for(unsigned i=0; i<map->getPath(source, target).size(); i++){
 
-			gv->addNode(map->getPath(source, target)[i].getID(), convertGeoCordToPixel(map->getPath(source, target)[i].getCoord().x, map->getPath(source, target)[i].getCoord().y)[0], convertGeoCordToPixel(map->getPath(source, target)[i].getCoord().x, map->getPath(source, target)[i].getCoord().y)[1]);
+			//gv->addNode(map->getPath(source, target)[i].getID(), convertGeoCordToPixel(map->getPath(source, target)[i].getCoord().x, map->getPath(source, target)[i].getCoord().y)[0], convertGeoCordToPixel(map->getPath(source, target)[i].getCoord().x, map->getPath(source, target)[i].getCoord().y)[1]);
 
 			ostringstream id;
 			id << map->getPath(source, target)[i].getID();
 
-			gv->setVertexLabel(map->getPath(source, target)[i].getID(), id.str());
-			gv->setVertexColor(map->getPath(source, target)[i].getID(), id.str());
+			//gv->setVertexLabel(map->getPath(source, target)[i].getID(), id.str());
+			//gv->setVertexColor(map->getPath(source, target)[i].getID(), id.str());
 
 			int indexS, indexN;
 
@@ -130,7 +167,7 @@ void drawPathGV(Intersection source, Intersection target){
 
 				idEdge = map->getVertexSet()[indexS]->getAdj()[map->getVertexSet()[indexS]->findEdgeByID(map->getVertexSet()[indexN]->getIntersection().getID())].getID();
 
-				gv->addEdge(idEdge, map->getPath(source, target)[i].getID(), map->getPath(source, target)[i+1].getID(), EdgeType::DIRECTED); //id edge, id source, id destino, type
+				//gv->addEdge(idEdge, map->getPath(source, target)[i].getID(), map->getPath(source, target)[i+1].getID(), EdgeType::DIRECTED); //id edge, id source, id destino, type
 
 			}
 
@@ -138,7 +175,7 @@ void drawPathGV(Intersection source, Intersection target){
 
 	}
 
-	gv->rearrange();
+	//gv->rearrange();
 }
 
 
@@ -264,52 +301,94 @@ void GPSMenu(){
 
 	int origem;
 	int destino;
+	int algorithm;
+	loadMap();
 
-	//while(destino = origem)
+
+	cout << endl << "Mapa carregado!" << endl;
+
+	cout << "A-star(0) ou dijkstra(1)? "; //devia garantir que é 0 ou 1
+	cin >> algorithm;
 
 	cout << endl << "Rua de origem(vertice)(1012 pa testar): ";
 	cin >>origem;
 
 	cout << "Qual e a rua de destino(28566 p testar): " << endl;
 	cin >> destino;
+
+	gv->closeWindow();
+
 	if(destino == origem) {
 		cout << "A rua que pretende ir e invalida: " << endl;
 		return;
 	}
 
-	//Intersection source = map->getVertexSet()[origem]->getIntersection();
-
-	//Intersection dest = map->getVertexSet()[destino]->getIntersection();
-
+	clock_t t;
+	t = clock();
 
 
-	map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection());
 
-	//map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection());
-	cout << "dijkstra complete" << endl;
-	drawPathGV(map->getVertexSet()[map->getVertexByID(1012)]->getIntersection(), map->getVertexSet()[map->getVertexByID(28566)]->getIntersection());
+
+	if(algorithm == 1){
+		map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection());
+	}
+
+	else{
+		map->aStar(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destino)]->getIntersection(),1);
+	}
+
+
+
+	cout << "Algorithm complete" << endl;
+	drawPathGV(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destino)]->getIntersection());
+	cout << "Mapa desenhado!" << endl;
+
+	t = clock() - t;
+
+	float r = (float)t / CLOCKS_PER_SEC;
+
+
+	cout << " TEMPO: " << setprecision(10) << r << endl;
+	cout << fixed;
 
 	/*vector <Intersection> path = map->getPath(map->getVertexSet()[origem]->getIntersection(), map->getVertexSet()[destino]->getIntersection());
-	Intersection last;
-	cout << "O caminho mais curto: " << endl;
-	for(unsigned int i = 0; i < path.size(); i++){
-		if(i > 0){
-			int id1 = map->getFirstID(last.getID());
-			int id2 = map->getFirstID(path[i].getID());
-			gv->setEdgeColor(getEdgeID(id1,id2), "green");
-			gv->setEdgeThickness(getEdgeID(id1,id2), 8);
-		}
-		stringstream ss;
-		ss << path[i].getID() << " (linha " << path[i].getID() << ")";
-		string str = ss.str();
-		cout << str << endl;
-		last = path[i];
-	}*/
+		Intersection last;
+		cout << "O caminho mais curto: " << endl;
+		for(unsigned int i = 0; i < path.size(); i++){
+			if(i > 0){
+				int id1 = map->getFirstID(last.getID());
+				int id2 = map->getFirstID(path[i].getID());
+				gv->setEdgeColor(getEdgeID(id1,id2), "green");
+				gv->setEdgeThickness(getEdgeID(id1,id2), 8);
+			}
+			stringstream ss;
+			ss << path[i].getID() << " (linha " << path[i].getID() << ")";
+			string str = ss.str();
+			cout << str << endl;
+			last = path[i];
+		}*/
 
 
 
 	//gv->rearrange();
 	//getchar();
+
+
+
+	//cin.clear();
+	//char exit = getchar();
+	//gv->closeWindow();
+	char exit;
+	do {
+		cout <<endl<< "Enter para continuar (fecha o mapa)" << endl;
+
+		cin.clear();
+		cin.ignore();
+		exit=getchar();
+		//putchar (c);
+	} while (exit != '\n');
+
+	gv->closeWindow();
 
 
 
@@ -340,16 +419,16 @@ void menu() {
 
 		switch(escolha)
 		{
-			case 1: GPSMenu();
-					break;
+		case 1: GPSMenu();
+		break;
 
 
-			case 2: addInterestPointsMenu();
-					break;
+		case 2: addInterestPointsMenu();
+		break;
 
 
 
-			default: break;
+		default: break;
 		}
 
 		cout << "Voltar ao menu principal(S/N)? ";
@@ -368,7 +447,4 @@ void menu() {
 
 
 }
-
-
-
 

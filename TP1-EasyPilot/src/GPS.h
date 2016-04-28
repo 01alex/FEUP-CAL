@@ -20,6 +20,11 @@
 #define WIDTH 1280
 #define HEIGHT 1080
 
+#define longitudeMin -8.6275
+#define longitudeMax -8.5939
+
+#define latitudeMin 41.1398
+#define latitudeMax 41.1568
 
 
 
@@ -69,5 +74,3 @@ void addInterestPointsMenu();
 
 
 void menu();
-
-

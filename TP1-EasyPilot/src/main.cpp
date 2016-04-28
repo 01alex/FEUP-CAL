@@ -4,7 +4,7 @@
 
 int main(){
 
-	string dbpath = "res/Data.txt";
+	string dbpath = "res/DataFull.txt";
 
 	readDataBase(dbpath);
 

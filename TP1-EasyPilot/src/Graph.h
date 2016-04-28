@@ -78,7 +78,7 @@ struct vertex_greater_than_time {
 template <class T>
 struct vertex_greater_than_fx {
 	bool operator()(Vertex<T> * a, Vertex<T> * b) const {
-		return a->fx > b->fx;
+		return a->fx < b->fx;
 	}
 };
 
@@ -100,6 +100,7 @@ template<class T>
 inline vector<Edge<T> > Vertex<T>::getAdj() const {
 	return adj;
 }
+
 
 
 template<class T>
@@ -457,7 +458,9 @@ void Graph<T>::DijkstraFastestPath(const T &start){		//baseado teorica 06.grafos
 
 	pq.push_back(s);
 
-	make_heap(pq.begin(), pq.end());
+	make_heap(pq.begin(), pq.end(), vertex_greater_than_time<T>());
+
+	//make_heap(pq.begin(), pq.end());
 
 	while(!pq.empty()){
 
@@ -487,19 +490,21 @@ void Graph<T>::DijkstraFastestPath(const T &start){		//baseado teorica 06.grafos
 
 
 template <class T>
-void Graph<T>::aStar(const T &start, const T &goal, bool dist){
+void Graph<T>::aStar(const T &start, const T &goal, bool dist){ //MAKE THIS BOOL
 
 	for(unsigned i = 0; i < vertexSet.size(); i++) {
 		vertexSet[i]->path = NULL;
 		vertexSet[i]->distance = INF;
 		vertexSet[i]->fx = INF;
-		vertexSet[i]->closed = false;
+		vertexSet[i]->closed = NULL;
 		vertexSet[i]->inQueue = false;
 	}
+
 
 	Vertex<T> *s = vertexSet[addVertex(start)];
 
 	s->setDistance(0);
+	s->closed = false;
 	s->fx = s->getDistance() + heuristic_aStar(s, vertexSet[addVertex(goal)], dist);
 
 	//priority_queue< VertexPtr<T>, vector< VertexPtr<T> >, CompareVertex<T> > nextVertices;
@@ -512,17 +517,19 @@ void Graph<T>::aStar(const T &start, const T &goal, bool dist){
 
 	//cout << s->getIntersection().getID() << endl;
 
-	make_heap(pq.begin(), pq.end());
+	make_heap(pq.begin(), pq.end(), vertex_greater_than_fx<T>());
 
 	while (!pq.empty()) {
 		Vertex<T> *current = pq.front();
 		pop_heap(pq.begin(), pq.end());
 		pq.pop_back();
 
-		current->inQueue = false;
+
+
+		current->inQueue = false; //extra(?)
 
 		if (current == vertexSet[addVertex(goal)]){
-			current->path = vertexSet[addVertex(goal)];
+			//current->path = vertexSet[addVertex(goal)];
 			break;
 		}
 
@@ -531,16 +538,65 @@ void Graph<T>::aStar(const T &start, const T &goal, bool dist){
 		for(unsigned i = 0; i < current->adj.size(); i++) {
 			Edge<T> edge = current->adj[i];
 			Vertex<T> *neighbour = edge.dest;
-
 			double weight = dist ? edge.length : neighbour->time;
+
+			/*if(neighbour->closed == NULL) {
+			 * nem lista aberta nem fechada
+			 * neighbour->closed = false;
+			 * neighbour->distance = current->distance + weight;
+			 * neighbour->path = current;
+			 * 	neighbour->fx = neighbour->distance + heuristic_aStar(neighbour, vertexSet[addVertex(goal)], dist);
+			 *
+			 * 	pq.push_back(vertexSet[addVertex(neighbour->getIntersection())]);
+			 *
+			 * }*/
+
+			/* if (!neighbour->closed) { //pertence à lista aberta
+			 * if (neighbour->distance > current->distance + weight) {
+				neighbour->distance = current->distance + weight;
+				neighbour->path = current;
+				neighbour->fx = neighbour->distance + heuristic_aStar(neighbour, vertexSet[addVertex(goal)], dist);
+				}
+				}*/
+
+			/*
+			 * if(neighbour->closed) {
+			 * if(neighbour->distance > current->distance + weight) {
+			 * neighbour->path = current;
+			 * neighbour->distance = current->distance + weight;
+			 * neighbour->fx = neighbour->distance + heuristic_aStar(neighbour, vertexSet[addVertex(goal)], dist);
+			 * updateFlood(neighbour);
+			 *
+			 */
+
+			/* updateFlood(vertex) {
+			 * if(vertex->closed != NULL && !vertex->closed)
+			 * return;
+			 *
+			 * for(int i = 0; i < vertex->adj.size(); i++) {
+			 *
+			 * vertex->adj[i]->distance = vertex->distance + vertex->adj[i].length;
+			 * vertex->adj[i]->fx = vertex->adj[i]->distance + heuristic_aStar(neighbour, vertexSet[addVertex(goal)], dist);
+			 * updateFlood(vertex->adj[i].dest;
+			 *
+			 * }
+			 * }
+			 *
+			 *
+			 *
+			 */
+
+
 
 			if (!neighbour->closed) {
 				neighbour->distance = current->distance + weight;
 				neighbour->path = current;
 				neighbour->fx = neighbour->distance + heuristic_aStar(neighbour, vertexSet[addVertex(goal)], dist);
 
-				if(neighbour->inQueue)
+
+				if(neighbour->inQueue){
 					removeFromQueue(pq, neighbour->getIntersection());
+				}
 				else neighbour->inQueue = true;
 
 				pq.push_back(vertexSet[addVertex(neighbour->getIntersection())]);
@@ -548,6 +604,7 @@ void Graph<T>::aStar(const T &start, const T &goal, bool dist){
 			}
 
 			else if (current->distance + weight + heuristic_aStar(neighbour, vertexSet[addVertex(goal)], dist) < neighbour->fx){
+
 				neighbour->closed = false;
 				neighbour->distance = current->distance + weight;
 				neighbour->path = current;
@@ -559,19 +616,11 @@ void Graph<T>::aStar(const T &start, const T &goal, bool dist){
 
 			}
 
-			cout << neighbour->path->getIntersection().getID() << endl;
-
 			make_heap(pq.begin(), pq.end(), vertex_greater_than_fx<T>());
 
 		}
 	}
 
-	cout << "PQ size: " << endl;
-	cout << pq.size() << endl;
-
-	for(unsigned i=0; i< pq.size(); i++){
-		cout << pq[i]->getIntersection().getID() << endl;
-	}
 
 	return;
 }
