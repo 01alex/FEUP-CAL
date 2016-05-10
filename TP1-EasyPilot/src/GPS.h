@@ -18,8 +18,8 @@
 #define DEFAULT_COLOR "black"
 
 #define PI 3.14159265
-#define WIDTH 1280
-#define HEIGHT 1080
+#define WIDTH 781
+#define HEIGHT 523
 
 #define longitudeMin -8.6275
 #define longitudeMax -8.5939
