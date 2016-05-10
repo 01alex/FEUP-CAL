@@ -6,7 +6,6 @@ vector<graphicData> dg;
 
 void readDataBase(string path){
 
-	ofstream teste("teste.csv");
 
 	map = new Graph<Intersection>();
 
@@ -29,7 +28,7 @@ void readDataBase(string path){
 		Intersection source(atoi(args[2].c_str()), atof(args[6].c_str()), atof(args[7].c_str()));
 		Intersection target(atoi(args[3].c_str()), atof(args[8].c_str()), atof(args[9].c_str()));
 
-		/*if(atof(args[6].c_str()) > longitudeMin && atof(args[6].c_str()) < longitudeMax && atof(args[7].c_str()) > latitudeMin && atof(args[7].c_str() ) < latitudeMax )
+		if(atof(args[6].c_str()) > longitudeMin && atof(args[6].c_str()) < longitudeMax && atof(args[7].c_str()) > latitudeMin && atof(args[7].c_str() ) < latitudeMax )
 		{
 			if(atof(args[8].c_str()) > longitudeMin && atof(args[8].c_str()) < longitudeMax && atof(args[9].c_str()) > latitudeMin && atof(args[9].c_str() ) < latitudeMax )
 			{
@@ -38,45 +37,10 @@ void readDataBase(string path){
 
 				map->addEdge(source, target, args[1], atof(args[4].c_str()), atof(args[5].c_str()));
 			}
-		}*/
-
-		map->addVertex(source);
-		map->addVertex(target);
-
-		map->addEdge(source, target, args[1], atof(args[4].c_str()), atof(args[5].c_str()));
+		}
 	}
-
 
 	cout << "Nodes: " << map->getNumVertex() << endl;
-
-	clock_t t;
-	t = clock();
-
-	map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(4750)]->getIntersection());
-	//map->DijkstraFastestPath(map->getVertexSet()[map->getVertexByID(4750)]->getIntersection());
-
-	//map->aStar(map->getVertexSet()[map->getVertexByID(4750)]->getIntersection(), map->getVertexSet()[map->getVertexByID(2755)]->getIntersection(), true);
-
-	t = clock() - t;
-
-	float r = (float)t / CLOCKS_PER_SEC;
-
-	drawPathGV(map->getVertexSet()[map->getVertexByID(4750)]->getIntersection(), map->getVertexSet()[map->getVertexByID(2755)]->getIntersection());		//map->aStar(map->getVertexSet()[map->getVertexByID(13257)]->getIntersection(), map->getVertexSet()[map->getVertexByID(1786)]->getIntersection(), true);
-
-	cout << "TEMPO: " << setprecision(10) << r << endl;
-	cout << fixed;
-
-
-	/* TESTS
-	int counteradj=0, counterindeg=0;
-		for(unsigned int i=0; i<map->getNumVertex(); i++){
-			counteradj += map->getVertexSet()[i]->getAdj().size();
-			counterindeg += map->getVertexSet()[i]->getIndegree();
-			//cout << "Adj: " << map->getVertexSet()[i]->getAdj().size() << endl;			//com origem no no
-			//cout << "Indegree: " << map->getVertexSet()[i]->getIndegree() << endl;		//apontam para o no
-	}
-	cout << "Edges: " << counteradj << endl;
-	cout << "Indegrees: " << counterindeg << endl; */
 
 }
 
@@ -105,7 +69,7 @@ vector<float> convertGeoCordToPixel(float lon, float lat){
 
 void drawPathGV(Intersection source, Intersection target){
 	gv = new GraphViewer(WIDTH, HEIGHT, false);
-	gv->setBackground("res/background.png");
+	gv->setBackground("res/background2.png");
 	gv->createWindow(WIDTH, HEIGHT);
 
 
@@ -168,7 +132,7 @@ void drawPathGV(Intersection source, Intersection target){
 void loadMap() {
 
 	gv = new GraphViewer(WIDTH, HEIGHT, false);
-	gv->setBackground("res/background.png");
+	gv->setBackground("res/background2.png");
 	gv->createWindow(WIDTH, HEIGHT);
 	gv->setVertexSize(0.1, 0.1);
 
