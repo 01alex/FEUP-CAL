@@ -6,7 +6,7 @@ int main(){
 
 	readDataBase(dbpath);
 
-	//menu();
+	menu();
 
 	//testEff();
 
