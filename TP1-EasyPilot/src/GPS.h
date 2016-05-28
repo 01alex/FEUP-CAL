@@ -13,7 +13,6 @@
 #include "graphviewer.h"
 #include "Intersection.h"
 #include "Graph.h"
-#include "GraphicData.h"
 
 #define DEFAULT_COLOR "black"
 

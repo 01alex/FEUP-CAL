@@ -2,7 +2,6 @@
 
 Graph<Intersection> *map;
 GraphViewer *gv;
-vector<graphicData> dg;
 
 void readDataBase(string path){
 
