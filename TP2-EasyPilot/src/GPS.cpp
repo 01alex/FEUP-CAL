@@ -401,6 +401,33 @@ unsigned kmp_matcher(string text, string pattern) {
 
 unsigned editDistance(string pattern, string text) {
 
+	int pl = pattern.length();
+	int tl = text.length();
+
+	int D[pl+1][tl+1];
+
+	//inicializacao
+	for(unsigned i=0; i<=pl; i++)
+		D[i][0] = i;
+
+	for(unsigned j=0; j<=tl; j++)
+		D[0][j] = j;
+
+	//recorrencia
+	for(unsigned i=1; i<=pl; i++){
+		for(unsigned j=1; j<=tl; j++){
+
+			if(pattern[i] == text[j])
+				D[i][j] = D[i-1][j-1];
+			else {
+				int aux = min( min(D[i-1][j-1], D[i-1][j]), D[i][j-1] );
+				D[i][j] = 1 + aux;
+			}
+		}
+	}
+
+	//finalizacao
+	return D[pl][tl];
 }
 
 int testEff(){

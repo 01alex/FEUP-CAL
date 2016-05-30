@@ -8,9 +8,11 @@ int main(){
 
 	//menu();
 
-	int x = kmp_matcher("ababXabab", "a");
+	//int x = kmp_matcher("avenidavenid", "avenid");
 
-	cout << "THIS IS " << x << endl;
+	int y = editDistance("abcdefghijkl", "bcdeffghixkl");
+
+	cout << "THIS IS " << y << endl;
 
 	//testEff();
 

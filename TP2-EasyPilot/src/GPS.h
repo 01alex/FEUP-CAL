@@ -10,6 +10,7 @@
 #include <math.h>
 #include <iomanip>
 #include <time.h>
+#include <algorithm>
 #include "graphviewer.h"
 #include "Intersection.h"
 #include "Graph.h"
