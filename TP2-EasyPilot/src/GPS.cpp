@@ -233,70 +233,124 @@ void addInterestPointsMenu(){ //funcao a chamar no menu para adicionar PI's pi's
 
 }
 
+void pesquisaStringMenu(){
+	int escolha;
+	string nRua;
+	vector<string> res;
+
+	cout << endl << "Pesquisa Localidade!" << endl;
+
+	cout << "1: Pesquisa Exata" << endl;
+	cout << "2: Pesquisa Aproximada" << endl;
+
+	cin >> escolha;
+
+	if(escolha != 1 && escolha != 2){
+		cout << "Escolha uma opcao valida!" << endl;
+		pesquisaStringMenu();
+	}
+
+	cout << "Nome da rua a pesquisar: " << endl;
+	cin >> nRua;
+
+	if(escolha == 1){
+		for(unsigned i=0; i<map->getNumVertex(); i++){
+			for(unsigned j=0; j<map->getVertexSet()[i]->getAdj().size(); j++){
+				if(kmp_matcher(map->getVertexSet()[i]->getAdj()[j].getName(), nRua) == 1)
+					res.push_back(map->getVertexSet()[i]->getAdj()[j].getName());
+			}
+		}
+	}
+
+	if(escolha == 2){
+		for(unsigned i=0; i<map->getNumVertex(); i++){
+			for(unsigned j=0; j<map->getVertexSet()[i]->getAdj().size(); j++){
+				if(editDistance(nRua, map->getVertexSet()[i]->getAdj()[j].getName()) == 0)
+					res.push_back(map->getVertexSet()[i]->getAdj()[j].getName());
+			}
+		}
+	}
+
+	for(unsigned k=0; k<res.size(); k++)
+		cout << res[k] << endl;
+
+}
+
 void GPSMenu(){
 
 	int origem;
 	int destino;
+	int escolha;
 	int algorithm;
 	loadMap();
 
 
 	cout << endl << "Mapa carregado!" << endl;
 
-	cout << "A-star(0) ou dijkstra(1)? "; //devia garantir que é 0 ou 1
-	cin >> algorithm;
+	cout << "1: Pesquisa Localidade" << endl;
+	cout << "2: A-Star" << endl;
+	cout << "3: Dijkstra" << endl;
+	cin >> escolha;
 
-	cout << endl << "Vertice de origem(vertice): ";
-	cin >>origem;
-
-	cout << "Qual e o vertice de destino: " << endl;
-	cin >> destino;
-
-	gv->closeWindow();
-
-	if(destino == origem) {
-		cout << "A rua que pretende ir e invalida: " << endl;
-		return;
+	if(escolha != 1 && escolha != 2 && escolha != 3){
+		cout << "Escolha uma opcao valida!" << endl;
+		GPSMenu();
 	}
 
-	clock_t t;
-	t = clock();
+	if(escolha == 1)
+		pesquisaStringMenu();
+	else{
+
+		cout << endl << "Vertice de origem: " << endl;
+		cin >> origem;
+
+		cout << "Vertice de destino: " << endl;
+		cin >> destino;
+
+		gv->closeWindow();
+
+		if(destino == origem) {
+			cout << "A rua que pretende ir e invalida: " << endl;
+			return;
+		}
+
+		clock_t t;
+		t = clock();
 
 
+		if(escolha == 2)
+			map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection());
+
+		else
+			map->aStar(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destino)]->getIntersection(),1);
 
 
-	if(algorithm == 1)
-		map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection());
+		//cout << "Algorithm complete" << endl;
+		drawPathGV(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destino)]->getIntersection());
+		cout << "Mapa desenhado!" << endl;
 
-	else
-		map->aStar(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destino)]->getIntersection(),1);
+		t = clock() - t;
 
-
-	//cout << "Algorithm complete" << endl;
-	drawPathGV(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destino)]->getIntersection());
-	cout << "Mapa desenhado!" << endl;
-
-	t = clock() - t;
-
-	float r = (float)t / CLOCKS_PER_SEC;
+		float r = (float)t / CLOCKS_PER_SEC;
 
 
-	cout << " TEMPO: " << setprecision(10) << r << endl;
-	cout << fixed;
+		cout << " TEMPO: " << setprecision(10) << r << endl;
+		cout << fixed;
 
 
-	char exit;
-	do {
-		cout <<endl<< "Enter para continuar (fecha o mapa)" << endl;
+		char exit;
+		do {
+			cout <<endl<< "Enter para continuar (fecha o mapa)" << endl;
 
-		cin.clear();
-		cin.ignore();
-		exit=getchar();
-		//putchar (c);
-	} while (exit != '\n');
+			cin.clear();
+			cin.ignore();
+			exit=getchar();
+			//putchar (c);
+		} while (exit != '\n');
 
-	gv->closeWindow();
+		gv->closeWindow();
 
+	}
 
 
 	return;
@@ -315,7 +369,7 @@ void menu() {
 
 	do{
 
-		cout <<setw(20)<< "Menu Principal" << endl << endl;
+		cout << setw(20) << "Menu Principal" << endl << endl;
 
 		cout << "1: Usar GPS" << endl;
 		cout << "2: Adicionar Ponte de Interesse" << endl;
@@ -401,8 +455,8 @@ unsigned kmp_matcher(string text, string pattern) {
 
 unsigned editDistance(string pattern, string text) {
 
-	int pl = pattern.length();
-	int tl = text.length();
+	unsigned pl = pattern.length();
+	unsigned tl = text.length();
 
 	int D[pl+1][tl+1];
 

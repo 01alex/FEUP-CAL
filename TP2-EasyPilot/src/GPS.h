@@ -97,11 +97,14 @@ unsigned editDistance(string pattern, string text);
  * Interface
  *
  */
+
 void menu();
 
 void addInterestPointsMenu();
 
 void GPSMenu();
+
+void pesquisaStringMenu();
 
 
 /*

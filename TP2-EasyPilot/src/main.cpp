@@ -4,15 +4,15 @@ int main(){
 
 	string dbpath = "res/DataFull.txt";
 
-	//readDataBase(dbpath);
+	readDataBase(dbpath);
 
-	//menu();
+	menu();
 
-	//int x = kmp_matcher("avenidavenid", "avenid");
+	//int x = kmp_matcher("avenida", "avenida");
 
-	int y = editDistance("abcdefghijkl", "bcdeffghixkl");
+	//int y = editDistance("abcdefghijkl", "bcdeffghixkl");
 
-	cout << "THIS IS " << y << endl;
+	//cout << "THIS IS " << x << endl;
 
 	//testEff();
 
