@@ -80,8 +80,8 @@ void loadMap();
  *
  */
 
-vector<int> kmp_pre(string pattern);
-unsigned kmp_matcher(string text, string pattern);
+void pre_kmp(string toSearch, vector<int> & prefix);
+int kmp_matcher(string text, string toSearch);
 
 
 /*
@@ -105,6 +105,9 @@ void addInterestPointsMenu();
 void GPSMenu();
 
 void pesquisaStringMenu();
+
+
+Vertex<Intersection> findVertexByEdge(string name);
 
 
 /*

@@ -233,6 +233,48 @@ void addInterestPointsMenu(){ //funcao a chamar no menu para adicionar PI's pi's
 
 }
 
+Vertex<Intersection> findVertexByEdge(string name) {
+
+	Vertex<Intersection> *v;
+	Vertex<Intersection> *BM;
+	vector <Vertex<Intersection>* > vertexs;
+
+	int counter;
+	int BestMatch = 9999;
+
+	vertexs=map->getVertexSet();
+
+	typename vector <Vertex<Intersection>* >::iterator it = vertexs.begin();
+	typename vector <Vertex<Intersection>* >::iterator ite = vertexs.end();
+
+	for(;it!=ite;it++)
+	{
+		v=*it;
+		if(v->getAdj().size() > 0){
+			string tmpName=v->getAdj()[0].getName();
+			if(kmp_matcher(tmpName,name) !=0 && tmpName.size()==name.size()){
+				cout << "found it" << endl;
+				return *v;
+
+			}
+			tmpName=v->getAdj()[0].getName();
+			counter = editDistance(tmpName,name);
+			if(counter < BestMatch)
+			{
+				BestMatch = counter;
+				BM = v;
+			}
+
+
+		}
+	}
+
+	cout << "Did you mean " << BM->getAdj()[0].getName() << " ?" <<endl;
+
+	//return vector<Intersection>();
+}
+
+
 void pesquisaStringMenu(){
 	int escolha;
 	string nRua;
@@ -251,16 +293,13 @@ void pesquisaStringMenu(){
 	}
 
 	cout << "Nome da rua a pesquisar: " << endl;
-	cin >> nRua;
-
+	cin.ignore();
+	getline(cin, nRua);
 	if(escolha == 1){
-		for(unsigned i=0; i<map->getNumVertex(); i++){
-			for(unsigned j=0; j<map->getVertexSet()[i]->getAdj().size(); j++){
-				if(kmp_matcher(map->getVertexSet()[i]->getAdj()[j].getName(), nRua) == 1)
-					res.push_back(map->getVertexSet()[i]->getAdj()[j].getName());
+		findVertexByEdge(nRua);
 			}
-		}
-	}
+
+
 
 	if(escolha == 2){
 		for(unsigned i=0; i<map->getNumVertex(); i++){
@@ -278,8 +317,8 @@ void pesquisaStringMenu(){
 
 void GPSMenu(){
 
-	int origem;
-	int destino;
+	string origem;
+	string destino;
 	int escolha;
 	int algorithm;
 	loadMap();
@@ -302,10 +341,18 @@ void GPSMenu(){
 	else{
 
 		cout << endl << "Vertice de origem: " << endl;
-		cin >> origem;
+		cin.ignore();
+		getline(cin, origem);
+		Vertex<Intersection> o = findVertexByEdge(origem);
+		int origemNum =o.getIntersection().getID();
+
 
 		cout << "Vertice de destino: " << endl;
-		cin >> destino;
+		//cin.ignore();
+		getline(cin, destino);
+		Vertex<Intersection> d = findVertexByEdge(destino);
+
+		int destinoNum = d.getIntersection().getID();
 
 		gv->closeWindow();
 
@@ -319,14 +366,14 @@ void GPSMenu(){
 
 
 		if(escolha == 2)
-			map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection());
+			map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(origemNum)]->getIntersection());
 
 		else
-			map->aStar(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destino)]->getIntersection(),1);
+			map->aStar(map->getVertexSet()[map->getVertexByID(origemNum)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destinoNum)]->getIntersection(),1);
 
 
 		//cout << "Algorithm complete" << endl;
-		drawPathGV(map->getVertexSet()[map->getVertexByID(origem)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destino)]->getIntersection());
+		drawPathGV(map->getVertexSet()[map->getVertexByID(origemNum)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destinoNum)]->getIntersection());
 		cout << "Mapa desenhado!" << endl;
 
 		t = clock() - t;
@@ -405,84 +452,72 @@ void menu() {
 
 }
 
-vector<int> kmp_pre(string pattern) {
+void pre_kmp(string toSearch, vector<int> & prefix) {
 
-	unsigned m = pattern.length();
+	int m = toSearch.size();
+	prefix[0] = -1;
+	int k = -1;
+	for (int q = 1; q < m; q++) {
+		while (k > -1 && toSearch[k + 1] != toSearch[q])
+			k = prefix[k];
+		if (toSearch[k + 1] == toSearch[q])
+			k = k + 1;
+		prefix[q] = k;
+	}
+}
 
-	vector<int> pi; pi.push_back(-1);
+int kmp_matcher(string text, string toSearch) {
+
+	int num = 0;
+	int m = toSearch.size();
+	vector<int> prefix(m);
+
+	pre_kmp(toSearch, prefix);
+
+	int size = text.size();
 
 	int k = -1;
-
-	for(unsigned q=1; q < m; q++){
-
-		while(k > -1 && pattern[k+1] != pattern[q])
-			k = pi[k];
-
-		if(pattern[k+1] == pattern[q])
+	for (int i = 0; i < size; i++) {
+		while (k > -1 && toSearch[k + 1] != text[i])
+			k = prefix[k];
+		if (toSearch[k + 1] == text[i])
 			k++;
-
-		pi[q] = k;
-	}
-
-	return pi;
-}
-
-unsigned kmp_matcher(string text, string pattern) {
-
-	unsigned counter = 0;
-	unsigned n = text.length();
-	unsigned m = pattern.length();
-
-	vector<int> pi(m); pi = kmp_pre(pattern);
-
-	int q = -1;
-
-	for(unsigned i=0; i < n; i++){
-		while(q > -1 && pattern[q+1] != text[i])
-			q = pi[q];
-
-		if(pattern[q+1] == text[i])
-			q++;
-
-		if(q == m-1){
-			counter++;
-			q = pi[q];
+		if (k == m - 1) {
+			num++;
+			k = prefix[k];
 		}
 	}
-
-	return counter;
+	return num;
 }
 
-unsigned editDistance(string pattern, string text) {
+unsigned editDistance(string name1, string name2) {
 
-	unsigned pl = pattern.length();
-	unsigned tl = text.length();
+	unsigned int l1 = name1.size();
+		unsigned int l2 = name2.size();
+		vector<vector<int> > D(l1 + 1, vector<int>(l2 + 1));
 
-	int D[pl+1][tl+1];
+		for (unsigned int i = 0; i <= l1; i++) {
+			D[i][0] = i;
+		}
 
-	//inicializacao
-	for(unsigned i=0; i<=pl; i++)
-		D[i][0] = i;
+		for (unsigned int j = 0; j <= l2; j++) {
+			D[0][j] = j;
+		}
 
-	for(unsigned j=0; j<=tl; j++)
-		D[0][j] = j;
-
-	//recorrencia
-	for(unsigned i=1; i<=pl; i++){
-		for(unsigned j=1; j<=tl; j++){
-
-			if(pattern[i] == text[j])
-				D[i][j] = D[i-1][j-1];
-			else {
-				int aux = min( min(D[i-1][j-1], D[i-1][j]), D[i][j-1] );
-				D[i][j] = 1 + aux;
+		for (unsigned int i = 1; i <= l1; i++) {
+			for (unsigned int j = 1; j <= l2; j++) {
+				if (name1[i-1] == name2[j-1]) {
+					D[i][j] = D[i - 1][j - 1];
+				} else {
+					D[i][j] = 1
+							+ min(min(D[i - 1][j - 1], D[i - 1][j]), D[i][j - 1]);
+				}
 			}
 		}
+
+		return D[l1][l2];
 	}
 
-	//finalizacao
-	return D[pl][tl];
-}
 
 int testEff(){
 

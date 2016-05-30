@@ -54,6 +54,7 @@ public:
 	int findEdge(Vertex<T> &v);		//retorna posicao no vetor adj se existir, se nao -1
 	int findEdgeByID(int id);
 
+
 	Vertex *path;
 
 	float fx;			//Astar
@@ -166,6 +167,8 @@ inline int Vertex<T>::findEdge(Vertex<T> &v) {
 	return -1;
 }
 
+
+
 template<class T>
 inline int Vertex<T>::findEdgeByID(int id){
 
@@ -177,8 +180,11 @@ inline int Vertex<T>::findEdgeByID(int id){
 	return -1;
 }
 
+
+
 template<class T>
 inline int Vertex<T>::findSmallestAdj() {
+
 
 	int result = 999999;
 
@@ -509,7 +515,7 @@ void Graph<T>::updateFlood(Vertex<T>* vertex, T goal) {
 	for(int i = 0; i < vertex->adj.size(); i++) {
 
 		vertex->adj[i].getDest()->setDistance(vertex->adj[i].getDest()->getDistance()  + vertex->adj[i].getLength());
-		vertex->adj[i].getDest()->fx = vertex->adj[i].getDest()->getDistance() + heuristic_aStar(vertex, vertexSet[addVertex(goal)],1);
+		vertex->adj[i].getDest()->fx = vertex->adj[i].getDest()->getDistance() + heuristic_aStar(vertex->adj[i].getDest(), vertexSet[addVertex(goal)], true);
 		updateFlood(vertex->adj[i].getDest(), goal);
 		//vertex->adj[i].getDest()->getDistance() = vertex->adj[i].getDest()->getDistance() + 2; //+ vertex->adj[i]->getLength();
 
@@ -577,7 +583,7 @@ void Graph<T>::aStar(const T &start, const T &goal, bool dist){ //MAKE THIS BOOL
 
 			}
 
-			if (!neighbour->closed) {
+			else if (!neighbour->closed) {
 				cout << "Nó aberto - aberto" << endl;//pertence à lista aberta
 				if (neighbour->distance > current->distance + weight) {
 					neighbour->distance = current->distance + weight;
@@ -587,19 +593,21 @@ void Graph<T>::aStar(const T &start, const T &goal, bool dist){ //MAKE THIS BOOL
 			}
 
 
-			if(neighbour->closed) {
+			else {
 				cout << "Nó fechado - processado" << endl;
 				if(neighbour->distance > current->distance + weight) {
 					neighbour->path = current;
 					neighbour->distance = current->distance + weight;
 					neighbour->fx = neighbour->distance + heuristic_aStar(neighbour, vertexSet[addVertex(goal)], dist);
-					//updateFlood(neighbour, goal);
+					updateFlood(neighbour, goal);
 				}
 			}
 
-			make_heap(pq.begin(), pq.end(), vertex_greater_than_fx<T>());
+
 
 		}
+
+		make_heap(pq.begin(), pq.end(), vertex_greater_than_fx<T>());
 	}
 
 
