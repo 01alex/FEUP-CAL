@@ -106,8 +106,10 @@ void GPSMenu();
 
 void pesquisaStringMenu();
 
+void aStarMenu();
 
-Vertex<Intersection> findVertexByEdge(string name);
+
+Vertex<Intersection> * findVertexByEdge(string name);
 
 
 /*

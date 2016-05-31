@@ -233,7 +233,7 @@ void addInterestPointsMenu(){ //funcao a chamar no menu para adicionar PI's pi's
 
 }
 
-Vertex<Intersection> findVertexByEdge(string name) {
+Vertex<Intersection> * findVertexByEdge(string name) {
 
 	Vertex<Intersection> *v;
 	Vertex<Intersection> *BM;
@@ -254,7 +254,7 @@ Vertex<Intersection> findVertexByEdge(string name) {
 			string tmpName=v->getAdj()[0].getName();
 			if(kmp_matcher(tmpName,name) !=0 && tmpName.size()==name.size()){
 				cout << "found it" << endl;
-				return *v;
+				return v;
 
 			}
 			tmpName=v->getAdj()[0].getName();
@@ -271,7 +271,7 @@ Vertex<Intersection> findVertexByEdge(string name) {
 
 	cout << "Did you mean " << BM->getAdj()[0].getName() << " ?" <<endl;
 
-	//return vector<Intersection>();
+	return NULL;
 }
 
 
@@ -297,7 +297,7 @@ void pesquisaStringMenu(){
 	getline(cin, nRua);
 	if(escolha == 1){
 		findVertexByEdge(nRua);
-			}
+	}
 
 
 
@@ -315,6 +315,91 @@ void pesquisaStringMenu(){
 
 }
 
+void aStarMenu() {
+
+	int origemNum;
+	int destinoNum;
+
+	string origem;
+	string destino;
+
+	cout << endl << "Rua de Origem: " << endl;
+	cin.ignore();
+	getline(cin, origem);
+	Vertex<Intersection> *o;
+	if((o = findVertexByEdge(origem)) != NULL){
+		cout << o->getAdj()[0].getName();
+		origemNum = o->getIntersection().getID();
+		cout << "Road Found" << endl;
+	}
+
+
+	cout << "Rua do Destino: " << endl;
+	//cin.ignore();
+	getline(cin, destino);
+	Vertex<Intersection> *d;
+	if((d = findVertexByEdge(destino)) != NULL){
+		destinoNum = d->getIntersection().getID();
+		cout << "Road Found" << endl;
+	}
+	clock_t t;
+	t = clock();
+	map->aStar(map->getVertexSet()[map->getVertexByID(origemNum)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destinoNum)]->getIntersection(),1);
+
+	drawPathGV(map->getVertexSet()[map->getVertexByID(origemNum)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destinoNum)]->getIntersection());
+	cout << "Mapa desenhado!" << endl;
+
+	t = clock() - t;
+
+	float r = (float)t / CLOCKS_PER_SEC;
+
+
+	cout << " TEMPO: " << setprecision(10) << r << endl;
+	cout << fixed;
+
+
+}
+
+void DijkstrasMenu() {
+
+	int origemNum;
+	int destinoNum;
+
+	string origem;
+	string destino;
+
+	cout << endl << "Rua de Origem: " << endl;
+	cin.ignore();
+	getline(cin, origem);
+	Vertex<Intersection> *o;
+	if((o = findVertexByEdge(origem)) != NULL){
+		origemNum = o->getIntersection().getID();
+		cout << "Road Found" << endl;
+	}
+
+	cout << "Rua do Destino: " << endl;
+	//cin.ignore();
+	getline(cin, destino);
+	Vertex<Intersection> *d;
+	if((d = findVertexByEdge(destino)) != NULL){
+		destinoNum = d->getIntersection().getID();
+		cout << "Road Found" << endl;
+	}
+	clock_t t;
+	t = clock();
+	map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(origemNum)]->getIntersection());
+	drawPathGV(map->getVertexSet()[map->getVertexByID(origemNum)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destinoNum)]->getIntersection());
+	cout << "Mapa desenhado!" << endl;
+
+	t = clock() - t;
+
+	float r = (float)t / CLOCKS_PER_SEC;
+
+
+	cout << " TEMPO: " << setprecision(10) << r << endl;
+	cout << fixed;
+}
+
 void GPSMenu(){
 
 	string origem;
@@ -324,6 +409,8 @@ void GPSMenu(){
 	loadMap();
 
 
+
+
 	cout << endl << "Mapa carregado!" << endl;
 
 	cout << "1: Pesquisa Localidade" << endl;
@@ -331,78 +418,59 @@ void GPSMenu(){
 	cout << "3: Dijkstra" << endl;
 	cin >> escolha;
 
-	if(escolha != 1 && escolha != 2 && escolha != 3){
-		cout << "Escolha uma opcao valida!" << endl;
-		GPSMenu();
-	}
 
-	if(escolha == 1)
-		pesquisaStringMenu();
-	else{
+	do
+	{
+		switch (escolha)
+		{
+		case 1:
+			pesquisaStringMenu();
+			break;
 
-		cout << endl << "Vertice de origem: " << endl;
-		cin.ignore();
-		getline(cin, origem);
-		Vertex<Intersection> o = findVertexByEdge(origem);
-		int origemNum =o.getIntersection().getID();
+		case 2:
+			aStarMenu();
+			break;
 
+		case 3:
+			DijkstrasMenu();
+			break;
 
-		cout << "Vertice de destino: " << endl;
-		//cin.ignore();
-		getline(cin, destino);
-		Vertex<Intersection> d = findVertexByEdge(destino);
-
-		int destinoNum = d.getIntersection().getID();
-
-		gv->closeWindow();
-
-		if(destino == origem) {
-			cout << "A rua que pretende ir e invalida: " << endl;
-			return;
+		default:
+			cout << "Bad choice! Please try again later.\n";
 		}
-
-		clock_t t;
-		t = clock();
+	} while (escolha <= 0 || escolha > 3);
 
 
-		if(escolha == 2)
-			map->DijkstraShortestPath(map->getVertexSet()[map->getVertexByID(origemNum)]->getIntersection());
-
-		else
-			map->aStar(map->getVertexSet()[map->getVertexByID(origemNum)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destinoNum)]->getIntersection(),1);
 
 
-		//cout << "Algorithm complete" << endl;
-		drawPathGV(map->getVertexSet()[map->getVertexByID(origemNum)]->getIntersection(), map->getVertexSet()[map->getVertexByID(destinoNum)]->getIntersection());
-		cout << "Mapa desenhado!" << endl;
+//	gv->closeWindow();
 
-		t = clock() - t;
-
-		float r = (float)t / CLOCKS_PER_SEC;
-
-
-		cout << " TEMPO: " << setprecision(10) << r << endl;
-		cout << fixed;
+	/*if(destino == origem) {
+				cout << "A rua que pretende ir e invalida: " << endl;
+				return;
+			}*/
 
 
-		char exit;
-		do {
-			cout <<endl<< "Enter para continuar (fecha o mapa)" << endl;
-
-			cin.clear();
-			cin.ignore();
-			exit=getchar();
-			//putchar (c);
-		} while (exit != '\n');
-
-		gv->closeWindow();
-
-	}
 
 
-	return;
+
+	char exit;
+	do {
+		cout <<endl<< "Enter para continuar (fecha o mapa)" << endl;
+
+		cin.clear();
+		cin.ignore();
+		exit=getchar();
+		//putchar (c);
+	} while (exit != '\n');
+
+	gv->closeWindow();
 
 }
+
+
+
+
 
 
 void menu() {
@@ -493,30 +561,30 @@ int kmp_matcher(string text, string toSearch) {
 unsigned editDistance(string name1, string name2) {
 
 	unsigned int l1 = name1.size();
-		unsigned int l2 = name2.size();
-		vector<vector<int> > D(l1 + 1, vector<int>(l2 + 1));
+	unsigned int l2 = name2.size();
+	vector<vector<int> > D(l1 + 1, vector<int>(l2 + 1));
 
-		for (unsigned int i = 0; i <= l1; i++) {
-			D[i][0] = i;
-		}
+	for (unsigned int i = 0; i <= l1; i++) {
+		D[i][0] = i;
+	}
 
-		for (unsigned int j = 0; j <= l2; j++) {
-			D[0][j] = j;
-		}
+	for (unsigned int j = 0; j <= l2; j++) {
+		D[0][j] = j;
+	}
 
-		for (unsigned int i = 1; i <= l1; i++) {
-			for (unsigned int j = 1; j <= l2; j++) {
-				if (name1[i-1] == name2[j-1]) {
-					D[i][j] = D[i - 1][j - 1];
-				} else {
-					D[i][j] = 1
-							+ min(min(D[i - 1][j - 1], D[i - 1][j]), D[i][j - 1]);
-				}
+	for (unsigned int i = 1; i <= l1; i++) {
+		for (unsigned int j = 1; j <= l2; j++) {
+			if (name1[i-1] == name2[j-1]) {
+				D[i][j] = D[i - 1][j - 1];
+			} else {
+				D[i][j] = 1
+						+ min(min(D[i - 1][j - 1], D[i - 1][j]), D[i][j - 1]);
 			}
 		}
-
-		return D[l1][l2];
 	}
+
+	return D[l1][l2];
+}
 
 
 int testEff(){
