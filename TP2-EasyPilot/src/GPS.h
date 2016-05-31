@@ -29,9 +29,8 @@
 
 
 
-
 /*
- * Le os dados de Data.txt, cria o graph, todos os seus vertices e arestas.
+ * Ler os dados de Data.txt, cria o graph, todos os seus vertices e arestas.
  *
  *
  *	O Data.txt contem a informacao da seguinte forma:
@@ -42,29 +41,27 @@
 
 void readDataBase(string path);
 
+
 /*
  *
- * Converte Latitudes e Longitudes extraidas de Data.txt para
- * posicoes na janela do graphviewer usando a formula:
- *
- *
- * ADICIONAR FORMULA AQUI
+ * Converter Latitudes e Longitudes extraidas de Data.txt para
+ * posicoes na janela do graphviewer
  *
  *
  */
-
 
 vector<float> convertGeoCordToPixel(float lon, float lat);
 
 
 /*
  *
- * Desenha
+ * Desenhar caminho
  *
  *
  */
 
 void drawPathGV(Intersection source, Intersection target);
+
 
 /*
  *
@@ -73,6 +70,7 @@ void drawPathGV(Intersection source, Intersection target);
  */
 
 void loadMap();
+
 
 /*
  *
@@ -92,6 +90,16 @@ int kmp_matcher(string text, string toSearch);
 
 unsigned editDistance(string pattern, string text);
 
+
+/*
+ *
+ * Corresponder nomes de arestas a vertices
+ *
+ */
+
+Vertex<Intersection> * findVertexByEdge(string name);
+
+
 /*
  *
  * Interface
@@ -100,16 +108,11 @@ unsigned editDistance(string pattern, string text);
 
 void menu();
 
-void addInterestPointsMenu();
-
 void GPSMenu();
 
-void pesquisaStringMenu();
+void planTravelMenu();
 
-void aStarMenu();
-
-
-Vertex<Intersection> * findVertexByEdge(string name);
+void addInterestPointsMenu();
 
 
 /*

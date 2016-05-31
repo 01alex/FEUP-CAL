@@ -199,20 +199,6 @@ inline int Vertex<T>::findSmallestAdj() {
 	return result;
 }
 
-/*template<class T>
-void Vertex<T>::updateFlood(Vertex<T> &vertex) {
-	if((vertex->closed != NULL) && (!(vertex->closed)))
-		return;
-
-	for(int i = 0; i < vertex->adj.size(); i++) {
-
-		vertex->adj[i]->distance = vertex->distance + vertex->adj[i].length;
-		vertex->adj[i]->fx = vertex->adj[i]->distance + heuristic_aStar(neighbour, vertexSet[addVertex(goal)], dist);
-		updateFlood(vertex->adj[i].dest;
-
-	}
-}*/
-
 
 // EDGE
 template <class T>
@@ -517,12 +503,11 @@ void Graph<T>::updateFlood(Vertex<T>* vertex, T goal) {
 		vertex->adj[i].getDest()->setDistance(vertex->adj[i].getDest()->getDistance()  + vertex->adj[i].getLength());
 		vertex->adj[i].getDest()->fx = vertex->adj[i].getDest()->getDistance() + heuristic_aStar(vertex->adj[i].getDest(), vertexSet[addVertex(goal)], true);
 		updateFlood(vertex->adj[i].getDest(), goal);
-		//vertex->adj[i].getDest()->getDistance() = vertex->adj[i].getDest()->getDistance() + 2; //+ vertex->adj[i]->getLength();
 
+		//vertex->adj[i].getDest()->getDistance() = vertex->adj[i].getDest()->getDistance() + 2; //+ vertex->adj[i]->getLength();
 		/*vertex->adj[i].getDest()->getDistance() = vertex->adj[i]->getDistance() + vertex->adj[i].getLength();
 		vertex->adj[i]->fx = vertex->adj[i].getDest()->getDistance(); + heuristic_aStar(neighbour, vertexSet[addVertex(goal)], dist);
 		updateFlood(vertex->adj[i].dest;*/
-
 	}
 }
 
@@ -573,7 +558,7 @@ void Graph<T>::aStar(const T &start, const T &goal, bool dist){ //MAKE THIS BOOL
 			double weight = dist ? edge.length : neighbour->time;
 
 			if(neighbour->closed == NULL) {
-				cout << "Nem fechado nem aberto" << endl;
+				//cout << "Nem fechado nem aberto" << endl;
 				neighbour->closed = false;
 				neighbour->distance = current->distance + weight;
 				neighbour->path = current;
@@ -584,7 +569,7 @@ void Graph<T>::aStar(const T &start, const T &goal, bool dist){ //MAKE THIS BOOL
 			}
 
 			else if (!neighbour->closed) {
-				cout << "Nó aberto - aberto" << endl;//pertence à lista aberta
+				//cout << "Nó aberto - aberto" << endl;//pertence à lista aberta
 				if (neighbour->distance > current->distance + weight) {
 					neighbour->distance = current->distance + weight;
 					neighbour->path = current;
@@ -592,9 +577,8 @@ void Graph<T>::aStar(const T &start, const T &goal, bool dist){ //MAKE THIS BOOL
 				}
 			}
 
-
 			else {
-				cout << "Nó fechado - processado" << endl;
+				//cout << "Nó fechado - processado" << endl;
 				if(neighbour->distance > current->distance + weight) {
 					neighbour->path = current;
 					neighbour->distance = current->distance + weight;
@@ -602,8 +586,6 @@ void Graph<T>::aStar(const T &start, const T &goal, bool dist){ //MAKE THIS BOOL
 					updateFlood(neighbour, goal);
 				}
 			}
-
-
 
 		}
 

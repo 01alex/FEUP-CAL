@@ -8,12 +8,6 @@ int main(){
 
 	menu();
 
-	//int x = kmp_matcher("avenida", "avenida");
-
-	//int y = editDistance("abcdefghijkl", "bcdeffghixkl");
-
-	//cout << "THIS IS " << x << endl;
-
 	//testEff();
 
 	//getchar();
