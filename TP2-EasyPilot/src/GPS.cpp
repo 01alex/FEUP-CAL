@@ -323,7 +323,7 @@ void aStarMenu() {
 	string origem;
 	string destino;
 
-	cout << endl << "Rua de Origem: " << endl;
+	cout << endl << "Rua de Origem:(Largo da Paz) " << endl;
 	cin.ignore();
 	getline(cin, origem);
 	Vertex<Intersection> *o;
@@ -334,7 +334,7 @@ void aStarMenu() {
 	}
 
 
-	cout << "Rua do Destino: " << endl;
+	cout << "Rua do Destino:(Rua da Firmeza) " << endl;
 	//cin.ignore();
 	getline(cin, destino);
 	Vertex<Intersection> *d;
